@@ -45,7 +45,7 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 /**
- * SHOW TOAST MESSAGE
+ * SHOW TOAST NOTIFICATION
  */
 function showToast(msg) {
   const toast = document.getElementById("toastBox");
@@ -56,8 +56,6 @@ function showToast(msg) {
     setTimeout(() => {
       toast.classList.add("hidden");
     }, 3500);
-  } else {
-    alert(msg);
   }
 }
 
@@ -121,9 +119,6 @@ function setupPasscodeAuth() {
   }
 }
 
-/**
- * PENGUNCIAN TAB OPERASIONAL SAAT LISENSI EXPIRED
- */
 function setupTabNavigation() {
   const tabBookingsBtn = document.getElementById("tabBookingsBtn");
   const tabPackagesBtn = document.getElementById("tabPackagesBtn");
@@ -180,9 +175,6 @@ function setupTabNavigation() {
   }
 }
 
-/**
- * CHECK LICENSE GUARD ON ADMIN LOAD
- */
 function checkLicenseGuardOnLoad() {
   const lic = CONFIG.checkLicenseStatus();
   if (lic.isExpired) {
@@ -287,40 +279,6 @@ function renderBookingsTable(data) {
   }).join("");
 
   lucide.createIcons();
-}
-
-async function updateStatus(bookingId, newStatus) {
-  const lic = CONFIG.checkLicenseStatus();
-  if (lic.isExpired) {
-    showToast("🛑 Fitur Terkunci! Silakan aktifkan lisensi di Tab Pengaturan.");
-    return;
-  }
-
-  try {
-    const payload = {
-      action: "updatePaymentStatus",
-      passcode: CONFIG.getAdminPasscode(),
-      bookingId: bookingId,
-      newStatus: newStatus
-    };
-
-    await fetch(CONFIG.GAS_API_URL, {
-      method: "POST",
-      headers: { "Content-Type": "text/plain;charset=utf-8" },
-      body: JSON.stringify(payload)
-    });
-
-    const target = allBookingsData.find(b => b.id === bookingId);
-    if (target) target.paymentStatus = newStatus;
-    updateStatsSummary(allBookingsData);
-    renderBookingsTable(allBookingsData);
-    showToast(`Status booking ${bookingId} diperbarui!`);
-  } catch (err) {
-    const target = allBookingsData.find(b => b.id === bookingId);
-    if (target) target.paymentStatus = newStatus;
-    updateStatsSummary(allBookingsData);
-    renderBookingsTable(allBookingsData);
-  }
 }
 
 async function loadPackagesData() {
@@ -448,55 +406,6 @@ function closePackageModal() {
   document.getElementById("packageModal").classList.add("hidden");
 }
 
-function editPackage(id) {
-  const lic = CONFIG.checkLicenseStatus();
-  if (lic.isExpired) {
-    showToast("🛑 Fitur Terkunci! Silakan aktifkan lisensi di Tab Pengaturan.");
-    return;
-  }
-
-  const item = allPackagesData.find(p => p.id === id);
-  if (!item) return;
-
-  document.getElementById("modalPackageTitle").innerText = "Edit Paket Layanan";
-  document.getElementById("pkgId").value = item.id;
-  document.getElementById("pkgName").value = item.name;
-  document.getElementById("pkgCategory").value = item.category;
-  document.getElementById("pkgPrice").value = item.price;
-  document.getElementById("pkgImageUrl").value = item.imageUrl || "";
-  document.getElementById("pkgDescription").value = item.description || "";
-
-  document.getElementById("packageModal").classList.remove("hidden");
-}
-
-async function deletePackage(id) {
-  const lic = CONFIG.checkLicenseStatus();
-  if (lic.isExpired) {
-    showToast("🛑 Fitur Terkunci! Silakan aktifkan lisensi di Tab Pengaturan.");
-    return;
-  }
-
-  try {
-    const payload = {
-      action: "deletePackage",
-      passcode: CONFIG.getAdminPasscode(),
-      packageId: id
-    };
-
-    const res = await fetch(CONFIG.GAS_API_URL, {
-      method: "POST",
-      headers: { "Content-Type": "text/plain;charset=utf-8" },
-      body: JSON.stringify(payload)
-    });
-
-    const result = await res.json();
-    showToast(result.message || "Paket berhasil dihapus!");
-    loadPackagesData();
-  } catch (err) {
-    showToast("Gagal menghapus paket.");
-  }
-}
-
 function setupSettingsAndLicense() {
   const brandingForm = document.getElementById("brandingForm");
   const credentialsForm = document.getElementById("credentialsForm");
@@ -551,24 +460,42 @@ function setupSettingsAndLicense() {
     });
   }
 
+  // ASYNC LIVE CLAIM LICENSING VIA K2C UNIVERSAL LICENSE HUB
   if (licenseForm) {
-    licenseForm.addEventListener("submit", (e) => {
+    licenseForm.addEventListener("submit", async (e) => {
       e.preventDefault();
-      const serialKey = document.getElementById("serialKeyInput").value;
-      
-      if (CONFIG.setLicenseSerial(serialKey)) {
+      const serialKeyInput = document.getElementById("serialKeyInput");
+      const submitBtn = licenseForm.querySelector("button[type='submit']");
+      const serialKey = serialKeyInput.value;
+
+      if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.innerText = "Memverifikasi ke K2C Hub...";
+      }
+
+      const res = await CONFIG.claimLicenseRemote(serialKey);
+
+      if (res.success) {
         updateLicenseUI();
         disableOperationalActions(false);
-        showToast("✓ Serial Key Lisensi Berhasil Diverifikasi & Diaktifkan!");
+        showToast(res.message || "✓ Serial Key Berhasil Diklaim & Diaktifkan!");
       } else {
-        showToast("✕ Serial Key tidak valid!");
+        showToast(res.message || "✕ Gagal Memverifikasi Serial Key!");
+      }
+
+      if (submitBtn) {
+        submitBtn.disabled = false;
+        submitBtn.innerText = "Aktivasi Lisensi Resmi";
       }
     });
   }
 
   if (resetLicenseBtn) {
     resetLicenseBtn.addEventListener("click", () => {
-      CONFIG.setLicenseSerial("");
+      localStorage.removeItem("wo_license_serial");
+      localStorage.removeItem("wo_license_activation_date");
+      localStorage.removeItem("wo_license_duration_days");
+      localStorage.removeItem("wo_license_expires_at");
       document.getElementById("serialKeyInput").value = "";
       updateLicenseUI();
       checkLicenseGuardOnLoad();
@@ -577,9 +504,6 @@ function setupSettingsAndLicense() {
   }
 }
 
-/**
- * UPDATE LICENSE STATUS DISPLAY IN SETTINGS TAB & REAL-TIME DAYS CALCULATION
- */
 function updateLicenseUI() {
   const hwidDisplay = document.getElementById("hwidDisplay");
   const licenseBadge = document.getElementById("licenseBadge");
