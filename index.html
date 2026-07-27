@@ -9,74 +9,74 @@
   <script src="https://unpkg.com/lucide@latest"></script>
   <link rel="stylesheet" href="assets/css/styles.css">
 </head>
-<body class="bg-[#FFF5F7] text-[#1F050A] antialiased selection:bg-[#800020] selection:text-white floral-pattern">
+<body class="bg-[#120A0C] text-white antialiased selection:bg-[#B76E79] selection:text-white floral-pattern-dark">
 
-  <!-- NAVBAR CERAH & NAVIGASI AKSI EKSPLISIT -->
-  <nav class="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-md border-b border-[#800020]/20 shadow-sm">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 sm:h-20 flex items-center justify-between">
+  <!-- NAVBAR FLUID RESPONSIVE FULL WIDTH -->
+  <nav class="fixed top-0 left-0 right-0 z-50 bg-[#1A0D11]/90 backdrop-blur-md border-b border-[#B76E79]/30 shadow-md">
+    <div class="w-full max-w-[1800px] mx-auto px-4 sm:px-8 lg:px-12 h-16 sm:h-20 flex items-center justify-between">
       <a href="#" class="flex items-center gap-2.5">
-        <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-gradient-to-tr from-[#800020] to-[#C04271] p-[1px] flex items-center justify-center shrink-0 shadow-md">
-          <div class="w-full h-full bg-white rounded-full flex items-center justify-center">
-            <i data-lucide="sparkles" class="w-4 h-4 sm:w-5 sm:h-5 text-[#800020]"></i>
+        <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-rose-gold-gradient p-[1px] flex items-center justify-center shrink-0 shadow-md">
+          <div class="w-full h-full bg-[#120A0C] rounded-full flex items-center justify-center">
+            <i data-lucide="sparkles" class="w-4 h-4 sm:w-5 sm:h-5 text-[#F7E7CE]"></i>
           </div>
         </div>
         <div>
-          <span class="font-serif-luxury text-xl sm:text-2xl font-bold tracking-wider text-gradient-rose block leading-none">AURA ELEGANCE</span>
-          <span class="text-[8px] sm:text-[9px] uppercase tracking-[0.2em] text-[#800020] font-extrabold block">Wedding Organizer</span>
+          <!-- DYNAMIC BRAND NAME -->
+          <span class="dynamic-brand-name font-serif-luxury text-xl sm:text-2xl font-bold tracking-wider text-gradient-rose block leading-none">AURA ELEGANCE</span>
+          <span class="text-[8px] sm:text-[9px] uppercase tracking-[0.2em] text-[#B76E79] font-extrabold block">Wedding Organizer</span>
         </div>
       </a>
 
       <!-- Desktop Nav Links -->
-      <div class="hidden md:flex items-center gap-8 text-xs font-extrabold uppercase tracking-widest text-[#4A121E]">
-        <a href="#portfolio" class="hover:text-[#800020] transition-colors">Portofolio</a>
-        <a href="#calculator" class="hover:text-[#800020] transition-colors">Kalkulator Biaya</a>
-        <a href="#booking" class="hover:text-[#800020] transition-colors">Booking Jadwal</a>
+      <div class="hidden md:flex items-center gap-8 text-xs font-extrabold uppercase tracking-widest text-[#E8C5C8]">
+        <a href="#portfolio" class="hover:text-[#F7E7CE] transition-colors">Portofolio</a>
+        <a href="#calculator" class="hover:text-[#F7E7CE] transition-colors">Kalkulator Biaya</a>
+        <a href="#booking" class="hover:text-[#F7E7CE] transition-colors">Booking Jadwal</a>
       </div>
 
-      <!-- FIX PERBAIKAN TOMBOL PORTAL TIM (EKSPLISIT LINK ADMIN.HTML) -->
       <div class="flex items-center gap-2 relative z-10">
-        <a href="admin.html" class="hidden sm:inline-flex cursor-pointer px-5 py-2.5 rounded-full border-2 border-[#800020] hover:bg-[#800020] hover:text-white text-[#800020] bg-white text-xs font-extrabold tracking-wider transition-all items-center gap-2 shadow-md">
-          <i data-lucide="lock" class="w-3.5 h-3.5"></i>
+        <a href="admin.html" class="hidden sm:inline-flex cursor-pointer px-5 py-2.5 rounded-full border border-[#B76E79]/50 hover:bg-[#800020] text-[#F7E7CE] bg-[#120A0C] text-xs font-extrabold tracking-wider transition-all items-center gap-2 shadow-md">
+          <i data-lucide="lock" class="w-3.5 h-3.5 text-[#B76E79]"></i>
           <span>Portal Tim</span>
         </a>
 
-        <button id="mobileMenuBtn" class="md:hidden p-2 rounded-xl bg-white border-2 border-[#800020] text-[#800020] cursor-pointer">
+        <button id="mobileMenuBtn" class="md:hidden p-2 rounded-xl bg-[#1A0D11] border border-[#B76E79]/40 text-[#F7E7CE] cursor-pointer">
           <i data-lucide="menu" class="w-5 h-5"></i>
         </button>
       </div>
     </div>
 
     <!-- Mobile Drawer Menu -->
-    <div id="mobileDrawer" class="hidden md:hidden bg-white border-b-2 border-[#800020]/30 px-4 py-5 space-y-4 shadow-xl">
-      <div class="flex flex-col space-y-3 text-xs font-extrabold uppercase tracking-wider text-[#4A121E]">
-        <a href="#portfolio" class="mobile-nav-link py-2 border-b border-[#800020]/10 flex items-center justify-between">
+    <div id="mobileDrawer" class="hidden md:hidden bg-[#1A0D11] border-b border-[#B76E79]/40 px-4 py-5 space-y-4 shadow-xl">
+      <div class="flex flex-col space-y-3 text-xs font-extrabold uppercase tracking-wider text-[#E8C5C8]">
+        <a href="#portfolio" class="mobile-nav-link py-2 border-b border-[#B76E79]/20 flex items-center justify-between">
           <span>Portofolio & Paket</span>
-          <i data-lucide="chevron-right" class="w-4 h-4 text-[#800020]"></i>
+          <i data-lucide="chevron-right" class="w-4 h-4 text-[#B76E79]"></i>
         </a>
-        <a href="#calculator" class="mobile-nav-link py-2 border-b border-[#800020]/10 flex items-center justify-between">
+        <a href="#calculator" class="mobile-nav-link py-2 border-b border-[#B76E79]/20 flex items-center justify-between">
           <span>Kalkulator Biaya</span>
-          <i data-lucide="chevron-right" class="w-4 h-4 text-[#800020]"></i>
+          <i data-lucide="chevron-right" class="w-4 h-4 text-[#B76E79]"></i>
         </a>
-        <a href="#booking" class="mobile-nav-link py-2 border-b border-[#800020]/10 flex items-center justify-between">
+        <a href="#booking" class="mobile-nav-link py-2 border-b border-[#B76E79]/20 flex items-center justify-between">
           <span>Booking Jadwal</span>
-          <i data-lucide="chevron-right" class="w-4 h-4 text-[#800020]"></i>
+          <i data-lucide="chevron-right" class="w-4 h-4 text-[#B76E79]"></i>
         </a>
       </div>
-      <a href="admin.html" class="w-full py-3 rounded-xl bg-[#800020] text-white text-xs font-extrabold tracking-wider flex items-center justify-center gap-2 shadow-md">
+      <a href="admin.html" class="w-full py-3 rounded-xl bg-rose-gold-gradient text-white text-xs font-extrabold tracking-wider flex items-center justify-center gap-2 shadow-md">
         <i data-lucide="lock" class="w-4 h-4"></i>
         <span>Portal Tim WO (Admin)</span>
       </a>
     </div>
   </nav>
 
-  <!-- HERO SECTION -->
+  <!-- HERO SECTION FLUID RESPONSIVE -->
   <section class="relative min-h-screen pt-28 sm:pt-36 pb-16 sm:pb-24 flex items-center justify-center overflow-hidden">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+    <div class="w-full max-w-[1800px] mx-auto px-4 sm:px-8 lg:px-12 relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
       
       <!-- Text Area (Left Column) -->
       <div class="lg:col-span-7 space-y-6 text-center lg:text-left">
-        <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white border-2 border-[#800020]/30 text-xs font-extrabold text-[#800020] shadow-sm">
-          <i data-lucide="flower-2" class="w-4 h-4 text-[#800020]"></i>
+        <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#1A0D11] border border-[#B76E79]/40 text-xs font-extrabold text-[#F7E7CE] shadow-sm">
+          <i data-lucide="flower-2" class="w-4 h-4 text-[#B76E79]"></i>
           <span>Professional Luxury Wedding Organizer</span>
         </div>
 
@@ -84,17 +84,17 @@
           Mewujudkan Momen Sakral Impian Dalam Balutan Kemewahan
         </h1>
 
-        <p class="text-sm sm:text-base text-[#4A121E] max-w-2xl font-semibold leading-relaxed">
+        <p class="text-sm sm:text-base text-[#E8C5C8] max-w-2xl font-medium leading-relaxed">
           Kami siap membantu merangkai setiap rincian momen bahagia Anda. Mulai dari MUA profesional, busana pengantin elegan, panggung dekorasi mewah, hingga penataan acara yang sempurna.
         </p>
 
         <div class="pt-2 flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4">
-          <a href="#calculator" class="w-full sm:w-auto px-8 py-4 rounded-full btn-primary-burgundy font-extrabold text-xs uppercase tracking-widest flex items-center justify-center gap-2 transition-all">
+          <a href="#calculator" class="w-full sm:w-auto px-8 py-4 rounded-full bg-rose-gold-gradient text-white font-extrabold text-xs uppercase tracking-widest flex items-center justify-center gap-2 transition-all shadow-lg hover:opacity-90">
             <i data-lucide="calculator" class="w-4 h-4 text-white"></i>
-            <span class="text-white">Simulasi Budget Kamu</span>
+            <span>Simulasi Budget Kamu</span>
           </a>
-          <a href="#booking" class="w-full sm:w-auto px-8 py-4 rounded-full bg-white border-2 border-[#800020] text-[#800020] hover:bg-[#FFEBF0] font-extrabold text-xs uppercase tracking-widest transition-all flex items-center justify-center gap-2 shadow-sm">
-            <i data-lucide="calendar-check" class="w-4 h-4 text-[#800020]"></i>
+          <a href="#booking" class="w-full sm:w-auto px-8 py-4 rounded-full bg-[#120A0C] border border-[#B76E79]/60 text-[#F7E7CE] hover:bg-[#800020]/40 font-extrabold text-xs uppercase tracking-widest transition-all flex items-center justify-center gap-2 shadow-sm">
+            <i data-lucide="calendar-check" class="w-4 h-4 text-[#B76E79]"></i>
             <span>Cek Ketersediaan Tanggal</span>
           </a>
         </div>
@@ -104,21 +104,21 @@
       <div class="lg:col-span-5 relative">
         <div class="relative mx-auto max-w-md lg:max-w-none grid grid-cols-2 gap-4">
           <div class="space-y-4">
-            <div class="rounded-3xl overflow-hidden border-4 border-white shadow-xl h-60 sm:h-72 transform -rotate-2 hover:rotate-0 transition-all duration-500">
+            <div class="rounded-3xl overflow-hidden border-2 border-[#B76E79] shadow-2xl h-60 sm:h-72 transform -rotate-2 hover:rotate-0 transition-all duration-500">
               <img src="https://images.unsplash.com/photo-1519741497674-611481863552?w=800" alt="Dekorasi Pernikahan" class="w-full h-full object-cover">
             </div>
-            <div class="rounded-3xl overflow-hidden border-4 border-white shadow-xl h-40 sm:h-48 bg-rose-soft-gradient p-4 flex flex-col justify-between">
-              <i data-lucide="heart" class="w-6 h-6 text-[#800020]"></i>
-              <p class="font-serif-luxury text-xl font-bold text-[#800020]">100% Tim Berpengalaman & Amanah</p>
+            <div class="rounded-3xl overflow-hidden border border-[#B76E79]/40 shadow-xl h-40 sm:h-48 glass-card-dark p-4 flex flex-col justify-between">
+              <i data-lucide="heart" class="w-6 h-6 text-[#B76E79]"></i>
+              <p class="font-serif-luxury text-xl font-bold text-[#F7E7CE]">100% Tim Berpengalaman & Amanah</p>
             </div>
           </div>
 
           <div class="space-y-4 pt-8">
-            <div class="rounded-3xl overflow-hidden border-4 border-white shadow-xl h-40 sm:h-48 bg-white p-5 text-center flex flex-col justify-center items-center shadow-md border-2 border-[#800020]/20">
+            <div class="rounded-3xl overflow-hidden border border-[#B76E79]/40 shadow-xl h-40 sm:h-48 glass-card-dark p-5 text-center flex flex-col justify-center items-center">
               <span class="font-serif-luxury text-4xl font-bold text-gradient-rose">150+</span>
-              <span class="text-[10px] uppercase tracking-wider font-extrabold text-[#800020]">Pernikahan Sukses</span>
+              <span class="text-[10px] uppercase tracking-wider font-extrabold text-[#E8C5C8]">Pernikahan Sukses</span>
             </div>
-            <div class="rounded-3xl overflow-hidden border-4 border-white shadow-xl h-60 sm:h-72 transform rotate-2 hover:rotate-0 transition-all duration-500">
+            <div class="rounded-3xl overflow-hidden border-2 border-[#F7E7CE] shadow-2xl h-60 sm:h-72 transform rotate-2 hover:rotate-0 transition-all duration-500">
               <img src="https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=800" alt="Makeup Pengantin" class="w-full h-full object-cover">
             </div>
           </div>
@@ -128,83 +128,83 @@
     </div>
   </section>
 
-  <!-- PORTOFOLIO SECTION -->
-  <section id="portfolio" class="py-20 sm:py-28 relative border-t-2 border-[#800020]/15 bg-white">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
+  <!-- PORTOFOLIO SECTION FLUID -->
+  <section id="portfolio" class="py-20 sm:py-28 relative border-t border-[#B76E79]/30 bg-[#1A0D11]/60">
+    <div class="w-full max-w-[1800px] mx-auto px-4 sm:px-8 lg:px-12 space-y-10">
       <div class="text-center space-y-2">
-        <span class="text-xs uppercase tracking-[0.3em] text-[#800020] font-extrabold">Katalog Layanan & Portofolio</span>
+        <span class="text-xs uppercase tracking-[0.3em] text-[#B76E79] font-extrabold">Katalog Layanan & Portofolio</span>
         <h2 class="font-serif-luxury text-4xl sm:text-5xl font-bold text-gradient-rose">Pilihan Paket Eksklusif</h2>
       </div>
 
       <div class="flex items-center justify-start sm:justify-center gap-2 overflow-x-auto pb-2 -mx-4 px-4 sm:mx-0 sm:px-0 no-scrollbar" id="categoryFilter">
-        <button data-category="ALL" class="filter-btn active shrink-0 px-6 py-2.5 rounded-full text-xs font-extrabold tracking-wider transition-all btn-primary-burgundy shadow-md">Semua</button>
-        <button data-category="Makeup" class="filter-btn shrink-0 px-6 py-2.5 rounded-full text-xs font-extrabold tracking-wider transition-all bg-white text-[#4A121E] border-2 border-[#800020]/30 hover:border-[#800020]">Makeup & Attire</button>
-        <button data-category="Dekorasi" class="filter-btn shrink-0 px-6 py-2.5 rounded-full text-xs font-extrabold tracking-wider transition-all bg-white text-[#4A121E] border-2 border-[#800020]/30 hover:border-[#800020]">Dekorasi & Florist</button>
-        <button data-category="Panggung" class="filter-btn shrink-0 px-6 py-2.5 rounded-full text-xs font-extrabold tracking-wider transition-all bg-white text-[#4A121E] border-2 border-[#800020]/30 hover:border-[#800020]">Panggung & Lighting</button>
+        <button data-category="ALL" class="filter-btn active shrink-0 px-6 py-2.5 rounded-full text-xs font-extrabold tracking-wider transition-all bg-rose-gold-gradient text-white shadow-md">Semua</button>
+        <button data-category="Makeup" class="filter-btn shrink-0 px-6 py-2.5 rounded-full text-xs font-extrabold tracking-wider transition-all glass-card-dark text-[#E8C5C8]">Makeup & Attire</button>
+        <button data-category="Dekorasi" class="filter-btn shrink-0 px-6 py-2.5 rounded-full text-xs font-extrabold tracking-wider transition-all glass-card-dark text-[#E8C5C8]">Dekorasi & Florist</button>
+        <button data-category="Panggung" class="filter-btn shrink-0 px-6 py-2.5 rounded-full text-xs font-extrabold tracking-wider transition-all glass-card-dark text-[#E8C5C8]">Panggung & Lighting</button>
       </div>
 
-      <div id="portfolioGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-        <!-- Dynamic Cards -->
+      <div id="portfolioGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+        <!-- Dynamic Cards Injected By JS -->
       </div>
     </div>
   </section>
 
   <!-- KALKULATOR BIAYA SECTION -->
   <section id="calculator" class="py-20 sm:py-28 relative">
-    <div class="max-w-4xl mx-auto px-4 sm:px-6 space-y-10">
+    <div class="w-full max-w-[1200px] mx-auto px-4 sm:px-8 space-y-10">
       <div class="text-center space-y-2">
-        <span class="text-xs uppercase tracking-[0.3em] text-[#800020] font-extrabold">Simulasi Anggaran Mandiri</span>
+        <span class="text-xs uppercase tracking-[0.3em] text-[#B76E79] font-extrabold">Simulasi Anggaran Mandiri</span>
         <h2 class="font-serif-luxury text-4xl sm:text-5xl font-bold text-gradient-rose">Kalkulator Biaya Pernikahan</h2>
       </div>
 
-      <div class="glass-card-bright rounded-3xl p-6 sm:p-10 border-2 border-[#800020]/30 space-y-8 shadow-xl">
+      <div class="glass-card-dark rounded-3xl p-6 sm:p-10 border border-[#B76E79]/40 space-y-8 shadow-2xl">
         <div class="space-y-2">
-          <label class="block text-xs uppercase font-extrabold tracking-wider text-[#800020]">1. Pilih Paket Utama Layanan</label>
-          <select id="calcPackageSelect" class="w-full bg-white border-2 border-[#800020]/30 rounded-xl px-4 py-3.5 text-xs text-[#1F050A] focus:outline-none border-rose-pink-glow shadow-sm font-bold">
+          <label class="block text-xs uppercase font-extrabold tracking-wider text-[#F7E7CE]">1. Pilih Paket Utama Layanan</label>
+          <select id="calcPackageSelect" class="w-full bg-[#120A0C] border border-[#B76E79]/50 rounded-xl px-4 py-3.5 text-xs text-white focus:outline-none border-rose-pink-glow font-bold">
             <option value="0" data-price="0">-- Pilih Paket Utama --</option>
           </select>
         </div>
 
         <div class="space-y-3">
-          <label class="block text-xs uppercase font-extrabold tracking-wider text-[#800020]">2. Pilih Layanan Tambahan (Add-On)</label>
+          <label class="block text-xs uppercase font-extrabold tracking-wider text-[#F7E7CE]">2. Pilih Layanan Tambahan (Add-On)</label>
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-3" id="calcAddonsContainer">
-            <label class="bg-white p-4 rounded-xl border-2 border-[#800020]/20 flex items-center justify-between cursor-pointer hover:border-[#800020] shadow-sm">
-              <span class="text-xs font-bold text-[#1F050A]">Live Music & Singer Ensemble</span>
+            <label class="bg-[#120A0C] p-4 rounded-xl border border-[#B76E79]/30 flex items-center justify-between cursor-pointer hover:border-[#B76E79]">
+              <span class="text-xs font-bold text-white">Live Music & Singer Ensemble</span>
               <div class="flex items-center gap-2">
-                <span class="text-[11px] font-mono text-[#800020] font-bold">+Rp 4.5M</span>
-                <input type="checkbox" value="4500000" class="calc-addon-check accent-[#800020] w-4 h-4">
+                <span class="text-[11px] font-mono text-[#FFD700] font-bold">+Rp 4.5M</span>
+                <input type="checkbox" value="4500000" class="calc-addon-check accent-[#B76E79] w-4 h-4">
               </div>
             </label>
-            <label class="bg-white p-4 rounded-xl border-2 border-[#800020]/20 flex items-center justify-between cursor-pointer hover:border-[#800020] shadow-sm">
-              <span class="text-xs font-bold text-[#1F050A]">Documentation & Video</span>
+            <label class="bg-[#120A0C] p-4 rounded-xl border border-[#B76E79]/30 flex items-center justify-between cursor-pointer hover:border-[#B76E79]">
+              <span class="text-xs font-bold text-white">Documentation & Video</span>
               <div class="flex items-center gap-2">
-                <span class="text-[11px] font-mono text-[#800020] font-bold">+Rp 6M</span>
-                <input type="checkbox" value="6000000" class="calc-addon-check accent-[#800020] w-4 h-4">
+                <span class="text-[11px] font-mono text-[#FFD700] font-bold">+Rp 6M</span>
+                <input type="checkbox" value="6000000" class="calc-addon-check accent-[#B76E79] w-4 h-4">
               </div>
             </label>
-            <label class="bg-white p-4 rounded-xl border-2 border-[#800020]/20 flex items-center justify-between cursor-pointer hover:border-[#800020] shadow-sm">
-              <span class="text-xs font-bold text-[#1F050A]">Photobooth Unlimited 3 Jam</span>
+            <label class="bg-[#120A0C] p-4 rounded-xl border border-[#B76E79]/30 flex items-center justify-between cursor-pointer hover:border-[#B76E79]">
+              <span class="text-xs font-bold text-white">Photobooth Unlimited 3 Jam</span>
               <div class="flex items-center gap-2">
-                <span class="text-[11px] font-mono text-[#800020] font-bold">+Rp 3.5M</span>
-                <input type="checkbox" value="3500000" class="calc-addon-check accent-[#800020] w-4 h-4">
+                <span class="text-[11px] font-mono text-[#FFD700] font-bold">+Rp 3.5M</span>
+                <input type="checkbox" value="3500000" class="calc-addon-check accent-[#B76E79] w-4 h-4">
               </div>
             </label>
-            <label class="bg-white p-4 rounded-xl border-2 border-[#800020]/20 flex items-center justify-between cursor-pointer hover:border-[#800020] shadow-sm">
-              <span class="text-xs font-bold text-[#1F050A]">Catering VIP 500 Porsi</span>
+            <label class="bg-[#120A0C] p-4 rounded-xl border border-[#B76E79]/30 flex items-center justify-between cursor-pointer hover:border-[#B76E79]">
+              <span class="text-xs font-bold text-white">Catering VIP 500 Porsi</span>
               <div class="flex items-center gap-2">
-                <span class="text-[11px] font-mono text-[#800020] font-bold">+Rp 35M</span>
-                <input type="checkbox" value="35000000" class="calc-addon-check accent-[#800020] w-4 h-4">
+                <span class="text-[11px] font-mono text-[#FFD700] font-bold">+Rp 35M</span>
+                <input type="checkbox" value="35000000" class="calc-addon-check accent-[#B76E79] w-4 h-4">
               </div>
             </label>
           </div>
         </div>
 
-        <div class="p-6 rounded-2xl bg-rose-soft-gradient border-2 border-[#800020]/30 flex flex-col sm:flex-row items-center justify-between gap-4 text-center sm:text-left">
+        <div class="p-6 rounded-2xl bg-[#2A0E14] border border-[#B76E79]/40 flex flex-col sm:flex-row items-center justify-between gap-4 text-center sm:text-left">
           <div>
-            <span class="text-[10px] uppercase tracking-widest text-[#800020] font-extrabold block">Total Estimasi Anggaran:</span>
+            <span class="text-[10px] uppercase tracking-widest text-[#B76E79] font-extrabold block">Total Estimasi Anggaran:</span>
             <span id="calcTotalDisplay" class="font-serif-luxury text-3xl sm:text-4xl font-bold text-gradient-rose">Rp 0</span>
           </div>
-          <button id="applyCalcToBookingBtn" class="w-full sm:w-auto px-8 py-3.5 rounded-full btn-primary-burgundy font-extrabold text-xs uppercase tracking-wider shadow-md flex items-center justify-center gap-2">
+          <button id="applyCalcToBookingBtn" class="w-full sm:w-auto px-8 py-3.5 rounded-full bg-rose-gold-gradient text-white font-extrabold text-xs uppercase tracking-wider shadow-md hover:opacity-90 flex items-center justify-center gap-2 cursor-pointer">
             <span>Gunakan Di Booking</span>
             <i data-lucide="arrow-down" class="w-4 h-4"></i>
           </button>
@@ -214,51 +214,51 @@
   </section>
 
   <!-- FORMULIR BOOKING -->
-  <section id="booking" class="py-20 sm:py-28 relative bg-white border-t-2 border-[#800020]/15">
-    <div class="max-w-3xl mx-auto px-4 sm:px-6 space-y-10">
+  <section id="booking" class="py-20 sm:py-28 relative bg-[#1A0D11]/80 border-t border-[#B76E79]/30">
+    <div class="w-full max-w-[1000px] mx-auto px-4 sm:px-8 space-y-10">
       <div class="text-center space-y-2">
-        <span class="text-xs uppercase tracking-[0.3em] text-[#800020] font-extrabold">Reservasi Tanggal Acara</span>
+        <span class="text-xs uppercase tracking-[0.3em] text-[#B76E79] font-extrabold">Reservasi Tanggal Acara</span>
         <h2 class="font-serif-luxury text-4xl sm:text-5xl font-bold text-gradient-rose">Formulir Booking Online</h2>
       </div>
 
-      <div class="glass-card-bright rounded-3xl p-6 sm:p-10 border-2 border-[#800020]/30 shadow-2xl">
+      <div class="glass-card-dark rounded-3xl p-6 sm:p-10 border border-[#B76E79]/40 shadow-2xl">
         <form id="bookingForm" class="space-y-6">
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
             <div class="space-y-1.5">
-              <label class="block text-xs uppercase font-extrabold text-[#800020]">Nama Lengkap Klien*</label>
-              <input type="text" id="clientName" required placeholder="Contoh: Anisa & Rizky" class="w-full bg-white border-2 border-[#800020]/30 rounded-xl px-4 py-3 text-xs text-[#1F050A] focus:outline-none border-rose-pink-glow font-bold">
+              <label class="block text-xs uppercase font-extrabold text-[#F7E7CE]">Nama Lengkap Klien*</label>
+              <input type="text" id="clientName" required placeholder="Contoh: Anisa & Rizky" class="w-full bg-[#120A0C] border border-[#B76E79]/50 rounded-xl px-4 py-3 text-xs text-white focus:outline-none border-rose-pink-glow font-bold">
             </div>
             <div class="space-y-1.5">
-              <label class="block text-xs uppercase font-extrabold text-[#800020]">Nomor WhatsApp*</label>
-              <input type="tel" id="phone" required placeholder="Contoh: 08123456789" class="w-full bg-white border-2 border-[#800020]/30 rounded-xl px-4 py-3 text-xs text-[#1F050A] focus:outline-none border-rose-pink-glow font-bold">
+              <label class="block text-xs uppercase font-extrabold text-[#F7E7CE]">Nomor WhatsApp*</label>
+              <input type="tel" id="phone" required placeholder="Contoh: 08123456789" class="w-full bg-[#120A0C] border border-[#B76E79]/50 rounded-xl px-4 py-3 text-xs text-white focus:outline-none border-rose-pink-glow font-bold">
             </div>
           </div>
 
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
             <div class="space-y-1.5">
-              <label class="block text-xs uppercase font-extrabold text-[#800020]">Rencana Tanggal Acara*</label>
-              <input type="date" id="eventDate" required class="w-full bg-white border-2 border-[#800020]/30 rounded-xl px-4 py-3 text-xs text-[#1F050A] focus:outline-none border-rose-pink-glow font-bold">
+              <label class="block text-xs uppercase font-extrabold text-[#F7E7CE]">Rencana Tanggal Acara*</label>
+              <input type="date" id="eventDate" required class="w-full bg-[#120A0C] border border-[#B76E79]/50 rounded-xl px-4 py-3 text-xs text-white focus:outline-none border-rose-pink-glow font-bold">
               <span id="dateStatus" class="text-[10px] font-bold block mt-1"></span>
             </div>
             <div class="space-y-1.5">
-              <label class="block text-xs uppercase font-extrabold text-[#800020]">Paket Yang Dipilih*</label>
-              <select id="packageSelected" required class="w-full bg-white border-2 border-[#800020]/30 rounded-xl px-4 py-3 text-xs text-[#1F050A] focus:outline-none border-rose-pink-glow font-bold">
+              <label class="block text-xs uppercase font-extrabold text-[#F7E7CE]">Paket Yang Dipilih*</label>
+              <select id="packageSelected" required class="w-full bg-[#120A0C] border border-[#B76E79]/50 rounded-xl px-4 py-3 text-xs text-white focus:outline-none border-rose-pink-glow font-bold">
                 <!-- Options -->
               </select>
             </div>
           </div>
 
           <div class="space-y-1.5">
-            <label class="block text-xs uppercase font-extrabold text-[#800020]">Lokasi / Gedung Acara*</label>
-            <input type="text" id="location" required placeholder="Contoh: Grand Ballroom Hotel Mulia" class="w-full bg-white border-2 border-[#800020]/30 rounded-xl px-4 py-3 text-xs text-[#1F050A] focus:outline-none border-rose-pink-glow font-bold">
+            <label class="block text-xs uppercase font-extrabold text-[#F7E7CE]">Lokasi / Gedung Acara*</label>
+            <input type="text" id="location" required placeholder="Contoh: Grand Ballroom Hotel Mulia" class="w-full bg-[#120A0C] border border-[#B76E79]/50 rounded-xl px-4 py-3 text-xs text-white focus:outline-none border-rose-pink-glow font-bold">
           </div>
 
           <div class="space-y-1.5">
-            <label class="block text-xs uppercase font-extrabold text-[#800020]">Total Estimasi Biaya (Rp)</label>
-            <input type="number" id="totalEstimate" readonly class="w-full bg-[#FFEBF0] border-2 border-[#800020]/30 rounded-xl px-4 py-3 text-xs text-[#800020] font-mono font-bold">
+            <label class="block text-xs uppercase font-extrabold text-[#F7E7CE]">Total Estimasi Biaya (Rp)</label>
+            <input type="number" id="totalEstimate" readonly class="w-full bg-[#2A0E14] border border-[#B76E79]/40 rounded-xl px-4 py-3 text-xs text-[#FFD700] font-mono font-bold">
           </div>
 
-          <button type="submit" id="submitBookingBtn" class="w-full py-4 rounded-xl btn-primary-burgundy font-extrabold text-xs uppercase tracking-widest shadow-xl flex items-center justify-center gap-2">
+          <button type="submit" id="submitBookingBtn" class="w-full py-4 rounded-xl bg-rose-gold-gradient text-white font-extrabold text-xs uppercase tracking-widest shadow-xl flex items-center justify-center gap-2 cursor-pointer hover:opacity-90">
             <i data-lucide="send" class="w-4 h-4"></i>
             <span>Kirim Booking Sekarang</span>
           </button>
@@ -268,15 +268,62 @@
   </section>
 
   <!-- FOOTER -->
-  <footer class="py-12 bg-white border-t-2 border-[#800020]/15 text-center text-xs text-[#4A121E] font-bold space-y-2 px-4">
-    <p class="font-serif-luxury text-lg text-[#800020] font-bold">Aura Elegance Wedding Organizer</p>
-    <p>© 2026 Aura Elegance. All Rights Reserved. High Contrast Edition.</p>
+  <footer class="py-12 bg-[#0C0607] border-t border-[#B76E79]/30 text-center text-xs text-[#E8C5C8] font-bold space-y-2 px-4">
+    <p class="dynamic-brand-name font-serif-luxury text-lg text-[#F7E7CE] font-bold">AURA ELEGANCE</p>
+    <p>© 2026 <span class="dynamic-brand-name">AURA ELEGANCE</span>. All Rights Reserved. Luxury Velvet Edition.</p>
   </footer>
+
+  <!-- MODAL LICENSE EXPIRED OVERLAY -->
+  <div id="licenseLockOverlay" class="fixed inset-0 z-50 bg-[#0C0607]/98 backdrop-blur-2xl hidden flex items-center justify-center p-4">
+    <div class="glass-card-dark border-2 border-rose-500 rounded-3xl w-full max-w-lg p-8 text-center space-y-6 shadow-2xl">
+      <div class="w-16 h-16 bg-rose-900/80 border border-rose-500 text-rose-300 rounded-full flex items-center justify-center mx-auto shadow-lg">
+        <i data-lucide="shield-alert" class="w-8 h-8"></i>
+      </div>
+      <div>
+        <h2 class="font-serif-luxury text-3xl font-bold text-rose-400">MASA TRIAL TELAH HABIS</h2>
+        <p class="text-xs text-[#E8C5C8] mt-2">Masa uji coba 30 hari untuk aplikasi ini telah berakhir. Silakan hubungi pemilik lisensi untuk membeli Serial Key resmi K2C Universal License Hub.</p>
+      </div>
+      <div class="p-4 bg-[#120A0C] border border-[#B76E79]/40 rounded-xl text-xs font-mono text-[#F7E7CE]">
+        <span>HWID Client Anda:</span>
+        <span id="overlayHWID" class="block text-amber-300 font-bold mt-1">WO-HWID-EXPIRED</span>
+      </div>
+      <a href="admin.html" class="block w-full py-3.5 rounded-xl bg-rose-gold-gradient text-white font-extrabold text-xs uppercase tracking-widest shadow-lg">
+        Aktivasi Di Dashboard Admin
+      </a>
+    </div>
+  </div>
+
+  <!-- MODAL RECEIPT SUCCESS -->
+  <div id="receiptModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md hidden flex items-center justify-center p-4">
+    <div class="glass-card-dark border border-[#B76E79] rounded-3xl w-full max-w-md p-8 text-center space-y-5 shadow-2xl">
+      <div class="w-16 h-16 bg-rose-gold-gradient rounded-full flex items-center justify-center mx-auto text-white shadow-lg">
+        <i data-lucide="check-circle" class="w-8 h-8"></i>
+      </div>
+      <h3 class="font-serif-luxury text-3xl font-bold text-gradient-rose">Booking Berhasil!</h3>
+      <p class="text-xs text-[#E8C5C8]">Terima kasih. Permohonan reservasi Anda telah tercatat pada sistem kami.</p>
+
+      <div class="bg-[#120A0C] p-4 rounded-2xl border border-[#B76E79]/40 text-left text-xs space-y-2 font-mono">
+        <div class="flex justify-between"><span class="text-[#B76E79]">Booking ID:</span><span id="receiptId" class="text-[#F7E7CE] font-bold"></span></div>
+        <div class="flex justify-between"><span class="text-[#B76E79]">Nama:</span><span id="receiptName" class="text-white"></span></div>
+        <div class="flex justify-between"><span class="text-[#B76E79]">Tanggal:</span><span id="receiptDate" class="text-white"></span></div>
+      </div>
+
+      <button onclick="document.getElementById('receiptModal').classList.add('hidden')" class="w-full py-3.5 rounded-full bg-rose-gold-gradient text-white font-extrabold text-xs uppercase tracking-wider cursor-pointer">
+        Tutup & Selesai
+      </button>
+    </div>
+  </div>
 
   <script src="assets/js/config.js"></script>
   <script src="assets/js/app.js"></script>
   <script>
-    lucide.createIcons();
+    document.addEventListener("DOMContentLoaded", () => {
+      const overlayHWID = document.getElementById("overlayHWID");
+      if (overlayHWID && typeof CONFIG !== "undefined") {
+        overlayHWID.innerText = CONFIG.getHWID();
+      }
+      lucide.createIcons();
+    });
   </script>
 </body>
 </html>
