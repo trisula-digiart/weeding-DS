@@ -8,7 +8,7 @@ const CONFIG = {
   GAS_API_URL: "https://script.google.com/macros/s/AKfycbwNBkqK8Z9M5JctiwSsvaxoQKEt8sm6tvw6ps2S1gShf2WTDm10Ym-t4qEE3Z11n85f/exec",
   
   // Endpoint Master Web K2C Universal License Hub Anda
-  K2C_HUB_API_URL: "https://script.google.com/macros/s/AKfycbwNBkqK8Z9M5JctiwSsvaxoQKEt8sm6tvw6ps2S1gShf2WTDm10Ym-t4qEE3Z11n85f/exec",
+  K2C_HUB_API_URL: "https://script.google.com/macros/s/AKfycbyDPyK7B3CTdD7uw32wO0XcX2prmFeDGr-mhpIsogEjsJQ8w_rNOXFBPrhnnq3w2pMa/exec",
   
   APP_ID: "K2C-WO",
 
