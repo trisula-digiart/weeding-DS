@@ -1,1 +1,78 @@
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap');
 
+/* CUSTOM LUXURY PALETTE & TYPOGRAPHY */
+:root {
+  --color-rose-gold: #B76E79;
+  --color-rose-gold-light: #E8C5C8;
+  --color-champagne: #F7E7CE;
+  --color-soft-burgundy: #800020;
+  --color-dark-burgundy: #2D000B;
+  --color-bg-dark: #120A0C;
+}
+
+body {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  background-color: var(--color-bg-dark);
+  color: #F8FAFC;
+  overflow-x: hidden;
+}
+
+.font-serif-luxury {
+  font-family: 'Cormorant Garamond', serif;
+}
+
+/* GRADIENT TEXT & BORDERS */
+.text-gradient-rose {
+  background: linear-gradient(135deg, #F7E7CE 0%, #B76E79 50%, #E8C5C8 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.bg-rose-gold-gradient {
+  background: linear-gradient(135deg, #B76E79 0%, #800020 100%);
+}
+
+.bg-champagne-gradient {
+  background: linear-gradient(135deg, #F7E7CE 0%, #B76E79 100%);
+}
+
+.border-rose-gold {
+  border-color: rgba(183, 110, 121, 0.4);
+}
+
+.border-rose-gold-glow:focus {
+  border-color: #B76E79;
+  box-shadow: 0 0 15px rgba(183, 110, 121, 0.3);
+}
+
+/* GLASSMORPHISM CARD */
+.glass-card {
+  background: rgba(45, 0, 11, 0.35);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(183, 110, 121, 0.25);
+}
+
+.glass-card-hover {
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.glass-card-hover:hover {
+  transform: translateY(-6px);
+  border-color: rgba(183, 110, 121, 0.6);
+  box-shadow: 0 12px 30px rgba(128, 0, 32, 0.3);
+}
+
+/* CUSTOM SCROLLBAR */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #120A0C;
+}
+::-webkit-scrollbar-thumb {
+  background: #800020;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #B76E79;
+}
