@@ -1,7 +1,3 @@
-/**
- * AURA ELEGANCE - ADMIN DASHBOARD LOGIC (HIGH CONTRAST DARK VELVET EDITION)
- */
-
 let allBookingsData = [];
 let allPackagesData = [];
 
@@ -39,21 +35,52 @@ const MOCK_ADMIN_PACKAGES = [
 ];
 
 document.addEventListener("DOMContentLoaded", () => {
+  applyDynamicBrandingAdmin();
   setupPasscodeAuth();
   setupTabNavigation();
   setupFiltersAndSearch();
   setupPackageForm();
+  setupSettingsAndLicense();
 });
 
 /**
- * PASSCODE AUTHENTICATION
+ * SHOW TOAST MESSAGE (REPLACES ALERT)
  */
+function showToast(msg) {
+  const toast = document.getElementById("toastBox");
+  const toastMsg = document.getElementById("toastMessage");
+  if (toast && toastMsg) {
+    toastMsg.innerText = msg;
+    toast.classList.remove("hidden");
+    setTimeout(() => {
+      toast.classList.add("hidden");
+    }, 3500);
+  }
+}
+
+/**
+ * DYNAMIC BRANDING RENDERER FOR ADMIN
+ */
+function applyDynamicBrandingAdmin() {
+  const brandName = CONFIG.getAppName();
+  document.title = `Admin Portal - ${brandName}`;
+
+  const brandLabels = document.querySelectorAll(".dynamic-brand-name");
+  brandLabels.forEach(el => {
+    el.innerText = brandName;
+  });
+}
+
 function setupPasscodeAuth() {
   const form = document.getElementById("passcodeForm");
   const passcodeModal = document.getElementById("passcodeModal");
   const dashboardContent = document.getElementById("dashboardContent");
   const passcodeError = document.getElementById("passcodeError");
   const logoutBtn = document.getElementById("logoutBtn");
+
+  // Pre-fill fields with current settings
+  const loginUser = document.getElementById("loginUsername");
+  if (loginUser) loginUser.value = CONFIG.getAdminUsername();
 
   if (sessionStorage.getItem("wo_admin_authenticated") === "true") {
     passcodeModal.classList.add("hidden");
@@ -65,9 +92,13 @@ function setupPasscodeAuth() {
   if (form) {
     form.addEventListener("submit", (e) => {
       e.preventDefault();
-      const enteredPasscode = document.getElementById("adminPasscode").value;
+      const enteredUsername = document.getElementById("loginUsername").value.trim();
+      const enteredPasscode = document.getElementById("adminPasscode").value.trim();
 
-      if (enteredPasscode === CONFIG.ADMIN_PASSCODE) {
+      const validUser = CONFIG.getAdminUsername();
+      const validPass = CONFIG.getAdminPasscode();
+
+      if (enteredUsername === validUser && enteredPasscode === validPass) {
         sessionStorage.setItem("wo_admin_authenticated", "true");
         passcodeError.classList.add("hidden");
         passcodeModal.classList.add("hidden");
@@ -88,41 +119,52 @@ function setupPasscodeAuth() {
   }
 }
 
-/**
- * TAB NAVIGATION LOGIC
- */
 function setupTabNavigation() {
   const tabBookingsBtn = document.getElementById("tabBookingsBtn");
   const tabPackagesBtn = document.getElementById("tabPackagesBtn");
+  const tabSettingsBtn = document.getElementById("tabSettingsBtn");
+
   const viewBookings = document.getElementById("viewBookings");
   const viewPackages = document.getElementById("viewPackages");
+  const viewSettings = document.getElementById("viewSettings");
 
-  if (tabBookingsBtn && tabPackagesBtn) {
+  function resetTabStyles() {
+    tabBookingsBtn.className = "py-4 px-5 text-xs font-extrabold uppercase tracking-wider text-[#E8C5C8] hover:text-[#F7E7CE] flex items-center gap-2 cursor-pointer shrink-0";
+    tabPackagesBtn.className = "py-4 px-5 text-xs font-extrabold uppercase tracking-wider text-[#E8C5C8] hover:text-[#F7E7CE] flex items-center gap-2 cursor-pointer shrink-0";
+    tabSettingsBtn.className = "py-4 px-5 text-xs font-extrabold uppercase tracking-wider text-[#E8C5C8] hover:text-[#F7E7CE] flex items-center gap-2 cursor-pointer shrink-0";
+
+    viewBookings.classList.add("hidden");
+    viewPackages.classList.add("hidden");
+    viewSettings.classList.add("hidden");
+  }
+
+  if (tabBookingsBtn && tabPackagesBtn && tabSettingsBtn) {
     tabBookingsBtn.addEventListener("click", () => {
-      tabBookingsBtn.className = "py-4 px-4 text-xs font-extrabold uppercase tracking-wider border-b-4 border-[#F7E7CE] text-[#F7E7CE] flex items-center gap-2 cursor-pointer";
-      tabPackagesBtn.className = "py-4 px-4 text-xs font-extrabold uppercase tracking-wider text-[#E8C5C8] hover:text-[#F7E7CE] flex items-center gap-2 cursor-pointer";
+      resetTabStyles();
+      tabBookingsBtn.className = "py-4 px-5 text-xs font-extrabold uppercase tracking-wider border-b-4 border-[#F7E7CE] text-[#F7E7CE] flex items-center gap-2 cursor-pointer shrink-0";
       viewBookings.classList.remove("hidden");
-      viewPackages.classList.add("hidden");
     });
 
     tabPackagesBtn.addEventListener("click", () => {
-      tabPackagesBtn.className = "py-4 px-4 text-xs font-extrabold uppercase tracking-wider border-b-4 border-[#F7E7CE] text-[#F7E7CE] flex items-center gap-2 cursor-pointer";
-      tabBookingsBtn.className = "py-4 px-4 text-xs font-extrabold uppercase tracking-wider text-[#E8C5C8] hover:text-[#F7E7CE] flex items-center gap-2 cursor-pointer";
+      resetTabStyles();
+      tabPackagesBtn.className = "py-4 px-5 text-xs font-extrabold uppercase tracking-wider border-b-4 border-[#F7E7CE] text-[#F7E7CE] flex items-center gap-2 cursor-pointer shrink-0";
       viewPackages.classList.remove("hidden");
-      viewBookings.classList.add("hidden");
+    });
+
+    tabSettingsBtn.addEventListener("click", () => {
+      resetTabStyles();
+      tabSettingsBtn.className = "py-4 px-5 text-xs font-extrabold uppercase tracking-wider border-b-4 border-[#F7E7CE] text-[#F7E7CE] flex items-center gap-2 cursor-pointer shrink-0";
+      viewSettings.classList.remove("hidden");
     });
   }
 }
 
-/**
- * FETCH BOOKINGS
- */
 async function loadAdminData() {
   const tableBody = document.getElementById("bookingsTableBody");
   if (!tableBody) return;
 
   try {
-    const res = await fetch(`${CONFIG.GAS_API_URL}?action=getBookings&passcode=${CONFIG.ADMIN_PASSCODE}`);
+    const res = await fetch(`${CONFIG.GAS_API_URL}?action=getBookings&passcode=${CONFIG.getAdminPasscode()}`);
     const result = await res.json();
 
     if (result.success && Array.isArray(result.data)) {
@@ -198,7 +240,7 @@ async function updateStatus(bookingId, newStatus) {
   try {
     const payload = {
       action: "updatePaymentStatus",
-      passcode: CONFIG.ADMIN_PASSCODE,
+      passcode: CONFIG.getAdminPasscode(),
       bookingId: bookingId,
       newStatus: newStatus
     };
@@ -213,6 +255,7 @@ async function updateStatus(bookingId, newStatus) {
     if (target) target.paymentStatus = newStatus;
     updateStatsSummary(allBookingsData);
     renderBookingsTable(allBookingsData);
+    showToast(`Status booking ${bookingId} diperbarui!`);
   } catch (err) {
     const target = allBookingsData.find(b => b.id === bookingId);
     if (target) target.paymentStatus = newStatus;
@@ -221,9 +264,6 @@ async function updateStatus(bookingId, newStatus) {
   }
 }
 
-/**
- * FETCH & RENDER PACKAGES (EXPLICIT INLINE GOLD & WHITE COLOR RENDERER)
- */
 async function loadPackagesData() {
   const tableBody = document.getElementById("packagesTableBody");
   if (!tableBody) return;
@@ -253,7 +293,6 @@ function renderPackagesTable(data) {
     return;
   }
 
-  // INLINE STYLE ATTR DIKUNCI MATI PADA STYLESHEET AGAR WARNA TEXT (PKG-01 & NAMA PAKET) TERBACA 100% TERANG!
   tableBody.innerHTML = data.map(item => `
     <tr class="hover:bg-[#280F16] transition-colors border-b border-[#B76E79]/20">
       <td class="py-4 px-6 font-mono font-extrabold text-xs" style="color: #FFD700 !important;">${item.id}</td>
@@ -275,9 +314,6 @@ function renderPackagesTable(data) {
   lucide.createIcons();
 }
 
-/**
- * PACKAGE FORM HANDLERS (SAVE & DELETE)
- */
 function setupPackageForm() {
   const addNewBtn = document.getElementById("addNewPackageBtn");
   const form = document.getElementById("packageForm");
@@ -310,7 +346,7 @@ function setupPackageForm() {
       try {
         const payload = {
           action: "savePackage",
-          passcode: CONFIG.ADMIN_PASSCODE,
+          passcode: CONFIG.getAdminPasscode(),
           data: pkgData
         };
 
@@ -321,12 +357,12 @@ function setupPackageForm() {
         });
 
         const result = await res.json();
-        alert(result.message || "Berhasil disimpan!");
+        showToast(result.message || "Paket berhasil disimpan!");
 
         closePackageModal();
         loadPackagesData();
       } catch (err) {
-        alert("Gagal menyimpan paket ke server Google Sheets.");
+        showToast("Gagal menyimpan paket ke server.");
       } finally {
         saveBtn.disabled = false;
         saveBtn.innerText = "Simpan Paket";
@@ -355,12 +391,10 @@ function editPackage(id) {
 }
 
 async function deletePackage(id) {
-  if (!confirm(`Apakah Anda yakin ingin menghapus paket ID: ${id}?`)) return;
-
   try {
     const payload = {
       action: "deletePackage",
-      passcode: CONFIG.ADMIN_PASSCODE,
+      passcode: CONFIG.getAdminPasscode(),
       packageId: id
     };
 
@@ -371,10 +405,124 @@ async function deletePackage(id) {
     });
 
     const result = await res.json();
-    alert(result.message || "Berhasil dihapus!");
+    showToast(result.message || "Paket berhasil dihapus!");
     loadPackagesData();
   } catch (err) {
-    alert("Gagal menghapus paket.");
+    showToast("Gagal menghapus paket.");
+  }
+}
+
+function setupSettingsAndLicense() {
+  const brandingForm = document.getElementById("brandingForm");
+  const credentialsForm = document.getElementById("credentialsForm");
+  const licenseForm = document.getElementById("licenseForm");
+  const copyHwidBtn = document.getElementById("copyHwidBtn");
+  const resetLicenseBtn = document.getElementById("resetLicenseBtn");
+
+  // Load current values
+  const settingBrandName = document.getElementById("settingBrandName");
+  const settingUsername = document.getElementById("settingUsername");
+  const settingPasscode = document.getElementById("settingPasscode");
+
+  if (settingBrandName) settingBrandName.value = CONFIG.getAppName();
+  if (settingUsername) settingUsername.value = CONFIG.getAdminUsername();
+  if (settingPasscode) settingPasscode.value = CONFIG.getAdminPasscode();
+
+  updateLicenseUI();
+
+  // Branding submit
+  if (brandingForm) {
+    brandingForm.addEventListener("submit", (e) => {
+      e.preventDefault();
+      const newName = settingBrandName.value;
+      if (CONFIG.setAppName(newName)) {
+        applyDynamicBrandingAdmin();
+        showToast("Nama Brand WO Berhasil Diperbarui!");
+      }
+    });
+  }
+
+  // Credentials submit
+  if (credentialsForm) {
+    credentialsForm.addEventListener("submit", (e) => {
+      e.preventDefault();
+      const newUser = settingUsername.value;
+      const newPass = settingPasscode.value;
+
+      CONFIG.setAdminUsername(newUser);
+      CONFIG.setAdminPasscode(newPass);
+      showToast("Kredensial Admin Berhasil Diperbarui!");
+    });
+  }
+
+  // Copy HWID with document.execCommand('copy')
+  if (copyHwidBtn) {
+    copyHwidBtn.addEventListener("click", () => {
+      const hwidText = CONFIG.getHWID();
+      const dummyInput = document.createElement("textarea");
+      document.body.appendChild(dummyInput);
+      dummyInput.value = hwidText;
+      dummyInput.select();
+      document.execCommand("copy");
+      document.body.removeChild(dummyInput);
+
+      showToast("HWID Client berhasil disalin ke Clipboard!");
+    });
+  }
+
+  // License submit
+  if (licenseForm) {
+    licenseForm.addEventListener("submit", (e) => {
+      e.preventDefault();
+      const serialKey = document.getElementById("serialKeyInput").value;
+      CONFIG.setLicenseSerial(serialKey);
+      updateLicenseUI();
+      showToast("Serial Key Lisensi Berhasil Diverifikasi!");
+    });
+  }
+
+  if (resetLicenseBtn) {
+    resetLicenseBtn.addEventListener("click", () => {
+      CONFIG.setLicenseSerial("");
+      document.getElementById("serialKeyInput").value = "";
+      updateLicenseUI();
+      showToast("Lisensi di-reset ke Mode Trial!");
+    });
+  }
+}
+
+/**
+ * UPDATE LICENSE STATUS DISPLAY IN SETTINGS TAB
+ */
+function updateLicenseUI() {
+  const hwidDisplay = document.getElementById("hwidDisplay");
+  const licenseBadge = document.getElementById("licenseBadge");
+  const licenseStatusText = document.getElementById("licenseStatusText");
+  const serialKeyInput = document.getElementById("serialKeyInput");
+
+  if (hwidDisplay) hwidDisplay.innerText = CONFIG.getHWID();
+
+  const lic = CONFIG.checkLicenseStatus();
+
+  if (serialKeyInput) serialKeyInput.value = CONFIG.getLicenseSerial();
+
+  if (licenseBadge && licenseStatusText) {
+    if (lic.status === "LICENSED") {
+      licenseBadge.innerText = "VERIFIED PREMIUM";
+      licenseBadge.className = "px-3 py-1 rounded-full text-[10px] font-extrabold uppercase border bg-emerald-500/20 text-emerald-300 border-emerald-500/40";
+      licenseStatusText.innerText = "✓ Lisensi Resmi Aktif (Lifetime Verified by K2C License Hub)";
+      licenseStatusText.className = "text-xs font-bold text-emerald-300";
+    } else if (lic.status === "TRIAL") {
+      licenseBadge.innerText = `TRIAL (${lic.daysLeft} HARI)`;
+      licenseBadge.className = "px-3 py-1 rounded-full text-[10px] font-extrabold uppercase border bg-amber-500/20 text-amber-300 border-amber-500/40";
+      licenseStatusText.innerText = `⏳ Masa Trial Aktif: Sisa ${lic.daysLeft} Hari lagi. Silakan beli Serial Key resmi sebelum habis.`;
+      licenseStatusText.className = "text-xs font-bold text-amber-300";
+    } else {
+      licenseBadge.innerText = "EXPIRED";
+      licenseBadge.className = "px-3 py-1 rounded-full text-[10px] font-extrabold uppercase border bg-rose-500/20 text-rose-300 border-rose-500/40";
+      licenseStatusText.innerText = "✕ Masa Trial 30 Hari Telah Habis! Aplikasi Terkunci.";
+      licenseStatusText.className = "text-xs font-bold text-rose-400";
+    }
   }
 }
 
