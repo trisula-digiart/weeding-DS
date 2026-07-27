@@ -15,6 +15,7 @@ body {
   background-color: var(--color-bg-dark);
   color: #F8FAFC;
   overflow-x: hidden;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .font-serif-luxury {
@@ -49,6 +50,7 @@ body {
 .glass-card {
   background: rgba(45, 0, 11, 0.35);
   backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
   border: 1px solid rgba(183, 110, 121, 0.25);
 }
 
@@ -62,9 +64,25 @@ body {
   box-shadow: 0 12px 30px rgba(128, 0, 32, 0.3);
 }
 
+/* MOBILE NATIVE INPUT FORM FIXES */
+input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: invert(0.8) sepia(1) saturate(5) hue-rotate(300deg);
+  cursor: pointer;
+}
+
+select {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23B76E79' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='m6 9 6 6 6-6'/></svg>");
+  background-repeat: no-repeat;
+  background-position: right 1rem center;
+  background-size: 1.2em;
+}
+
 /* CUSTOM SCROLLBAR */
 ::-webkit-scrollbar {
-  width: 8px;
+  width: 6px;
 }
 ::-webkit-scrollbar-track {
   background: #120A0C;
