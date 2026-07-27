@@ -78,36 +78,86 @@ const CONFIG = {
     return new Date(dateStr);
   },
 
-  // 5. K2C LICENSE VERIFICATION ENGINE
+  // 5. K2C LICENSE VERIFICATION ENGINE & DURATION CALCULATOR
   getLicenseSerial: function() {
     return localStorage.getItem("wo_license_serial") || "";
   },
+  
   setLicenseSerial: function(serialKey) {
-    if (serialKey) {
-      localStorage.setItem("wo_license_serial", serialKey.trim().toUpperCase());
+    if (serialKey && serialKey.trim().length >= 10) {
+      const cleanSerial = serialKey.trim().toUpperCase();
+      localStorage.setItem("wo_license_serial", cleanSerial);
+      localStorage.setItem("wo_license_activation_date", new Date().toISOString());
+      
+      // Deteksi Durasi dari Format Serial Key K2C Hub (e.g. -30D, -365D, -3650D / LIFETIME)
+      let durationDays = 30; // Default jika berdurasi
+      if (cleanSerial.endsWith("-30D") || cleanSerial.endsWith("-30")) {
+        durationDays = 30;
+      } else if (cleanSerial.endsWith("-365D") || cleanSerial.endsWith("-365")) {
+        durationDays = 365;
+      } else if (cleanSerial.includes("LIFETIME") || cleanSerial.endsWith("-3650D")) {
+        durationDays = 9999;
+      } else {
+        durationDays = 365; // Default valid serial
+      }
+      localStorage.setItem("wo_license_duration_days", durationDays.toString());
+      return true;
     } else {
       localStorage.removeItem("wo_license_serial");
+      localStorage.removeItem("wo_license_activation_date");
+      localStorage.removeItem("wo_license_duration_days");
+      return false;
     }
   },
 
   checkLicenseStatus: function() {
     const serial = this.getLicenseSerial();
-    const hwid = this.getHWID();
 
-    // Check if Serial Key is valid against K2C License Engine Pattern
-    if (serial && serial.length >= 12) {
-      // Basic Hash Verification Check matching K2C License Hub format
-      if (serial.startsWith("K2C-") || serial.startsWith("LIC-") || serial.includes("WO-2026")) {
-        return {
-          status: "LICENSED",
-          message: "Lisensi Resmi Terverifikasi (Lifetime Active)",
-          isExpired: false,
-          daysLeft: 9999
-        };
+    // 1. JIKA SERIAL KEY RESMI TERISI
+    if (serial && serial.length >= 10) {
+      const isFormatValid = serial.startsWith("K2C-") || serial.startsWith("LIC-") || serial.includes("WO-2026") || serial.includes("K2C");
+      
+      if (isFormatValid) {
+        const activationDateStr = localStorage.getItem("wo_license_activation_date") || new Date().toISOString();
+        const durationDays = parseInt(localStorage.getItem("wo_license_duration_days") || "365", 10);
+        
+        if (durationDays >= 9000) {
+          return {
+            status: "LICENSED",
+            type: "LIFETIME",
+            message: "✓ Lisensi Resmi Aktif (Lifetime Verified by K2C License Hub)",
+            isExpired: false,
+            daysLeft: 9999
+          };
+        }
+
+        const actDate = new Date(activationDateStr);
+        const now = new Date();
+        const diffTime = now.getTime() - actDate.getTime();
+        const diffDays = Math.floor(diffTime / (1000 * 3600 * 24));
+        const daysLeft = Math.max(0, durationDays - diffDays);
+
+        if (daysLeft > 0) {
+          return {
+            status: "LICENSED",
+            type: "SUBSCRIPTION",
+            message: `✓ Lisensi Resmi Aktif: Sisa ${daysLeft} Hari lagi (Verified by K2C License Hub)`,
+            isExpired: false,
+            daysLeft: daysLeft
+          };
+        } else {
+          return {
+            status: "EXPIRED",
+            type: "SUBSCRIPTION_EXPIRED",
+            message: "✕ Masa Aktif Lisensi Serial Key Telah Habis! Silakan perpanjang Serial Key.",
+            isExpired: true,
+            daysLeft: 0
+          };
+        }
       }
     }
 
-    // Trial Calculation (30 Days)
+    // 2. JIKA MODES TRIAL 30 HARI
     const installDate = this.getInstallDate();
     const now = new Date();
     const diffTime = now.getTime() - installDate.getTime();
@@ -117,14 +167,16 @@ const CONFIG = {
     if (daysLeft > 0) {
       return {
         status: "TRIAL",
-        message: `Masa Trial Aktif (Sisa ${daysLeft} Hari)`,
+        type: "TRIAL",
+        message: `⏳ Masa Trial Aktif: Sisa ${daysLeft} Hari lagi...`,
         isExpired: false,
         daysLeft: daysLeft
       };
     } else {
       return {
         status: "EXPIRED",
-        message: "Masa Trial 30 Hari Telah Habis! Silakan Masukkan Serial Key Resmi.",
+        type: "TRIAL_EXPIRED",
+        message: "✕ Masa Trial 30 Hari Telah Habis! Aplikasi Terkunci.",
         isExpired: true,
         daysLeft: 0
       };
