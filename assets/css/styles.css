@@ -1,57 +1,63 @@
-@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap');
 
-/* CUSTOM LUXURY PALETTE & TYPOGRAPHY */
+/* BRIGHT LUXURY ROSE PINK PALETTE */
 :root {
+  --color-rose-main: #D473A6;
   --color-rose-gold: #B76E79;
-  --color-rose-gold-light: #E8C5C8;
-  --color-champagne: #F7E7CE;
-  --color-soft-burgundy: #800020;
-  --color-dark-burgundy: #2D000B;
-  --color-bg-dark: #120A0C;
+  --color-rose-soft: #FDE8E0;
+  --color-bg-bright: #FFF5F7;
+  --color-card-bright: #FFFFFF;
+  --color-text-dark: #3A0C18;
+  --color-text-sub: #6B2D3E;
+  --color-burgundy: #800020;
 }
 
 body {
   font-family: 'Plus Jakarta Sans', sans-serif;
-  background-color: var(--color-bg-dark);
-  color: #F8FAFC;
+  background-color: var(--color-bg-bright);
+  color: var(--color-text-dark);
   overflow-x: hidden;
   -webkit-tap-highlight-color: transparent;
+  background-image: 
+    radial-gradient(circle at 10% 20%, rgba(212, 115, 166, 0.08) 0%, transparent 40%),
+    radial-gradient(circle at 90% 80%, rgba(183, 110, 121, 0.08) 0%, transparent 40%);
 }
 
 .font-serif-luxury {
   font-family: 'Cormorant Garamond', serif;
 }
 
-/* GRADIENT TEXT & BORDERS */
+/* GRADIENT TEXT & BUTTONS */
 .text-gradient-rose {
-  background: linear-gradient(135deg, #F7E7CE 0%, #B76E79 50%, #E8C5C8 100%);
+  background: linear-gradient(135deg, #800020 0%, #B76E79 50%, #D473A6 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 
-.bg-rose-gold-gradient {
-  background: linear-gradient(135deg, #B76E79 0%, #800020 100%);
+.bg-rose-pink-gradient {
+  background: linear-gradient(135deg, #E882B4 0%, #B76E79 50%, #800020 100%);
 }
 
-.bg-champagne-gradient {
-  background: linear-gradient(135deg, #F7E7CE 0%, #B76E79 100%);
+.bg-rose-soft-gradient {
+  background: linear-gradient(135deg, #FFF0F4 0%, #FDE2EA 100%);
 }
 
-.border-rose-gold {
-  border-color: rgba(183, 110, 121, 0.4);
+.border-rose-pink {
+  border-color: rgba(212, 115, 166, 0.35);
 }
 
-.border-rose-gold-glow:focus {
-  border-color: #B76E79;
-  box-shadow: 0 0 15px rgba(183, 110, 121, 0.3);
+.border-rose-pink-glow:focus {
+  border-color: #D473A6;
+  box-shadow: 0 0 15px rgba(212, 115, 166, 0.25);
 }
 
-/* GLASSMORPHISM CARD */
-.glass-card {
-  background: rgba(45, 0, 11, 0.35);
+/* GLASS CARD LIGHT MODE */
+.glass-card-bright {
+  background: rgba(255, 255, 255, 0.85);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(183, 110, 121, 0.25);
+  border: 1px solid rgba(212, 115, 166, 0.25);
+  box-shadow: 0 10px 30px rgba(128, 0, 32, 0.04);
 }
 
 .glass-card-hover {
@@ -60,13 +66,18 @@ body {
 
 .glass-card-hover:hover {
   transform: translateY(-6px);
-  border-color: rgba(183, 110, 121, 0.6);
-  box-shadow: 0 12px 30px rgba(128, 0, 32, 0.3);
+  border-color: rgba(212, 115, 166, 0.6);
+  box-shadow: 0 15px 35px rgba(183, 110, 121, 0.15);
 }
 
-/* MOBILE NATIVE INPUT FORM FIXES */
+/* FLORAL WATERMARK ORNAMENT */
+.floral-pattern {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80' viewBox='0 0 80 80'%3E%3Cpath fill='%23d473a6' fill-opacity='0.05' d='M40 0 C45 20 60 35 80 40 C60 45 45 60 40 80 C35 60 20 45 0 40 C20 35 35 20 40 0 Z'/%3E%3C/svg%3E");
+}
+
+/* INPUT FORM CERAH */
 input[type="date"]::-webkit-calendar-picker-indicator {
-  filter: invert(0.8) sepia(1) saturate(5) hue-rotate(300deg);
+  filter: invert(0.2) sepia(1) saturate(5) hue-rotate(280deg);
   cursor: pointer;
 }
 
@@ -74,21 +85,21 @@ select {
   -webkit-appearance: none;
   -moz-appearance: none;
   appearance: none;
-  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23B76E79' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='m6 9 6 6 6-6'/></svg>");
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23800020' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='m6 9 6 6 6-6'/></svg>");
   background-repeat: no-repeat;
   background-position: right 1rem center;
   background-size: 1.2em;
 }
 
-/* CUSTOM SCROLLBAR */
+/* SCROLLBAR PINK */
 ::-webkit-scrollbar {
-  width: 6px;
+  width: 8px;
 }
 ::-webkit-scrollbar-track {
-  background: #120A0C;
+  background: #FFF5F7;
 }
 ::-webkit-scrollbar-thumb {
-  background: #800020;
+  background: #E882B4;
   border-radius: 4px;
 }
 ::-webkit-scrollbar-thumb:hover {
