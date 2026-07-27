@@ -1,5 +1,6 @@
 let allBookingsData = [];
 let allPackagesData = [];
+let allInventoryData = [];
 
 const MOCK_ADMIN_BOOKINGS = [
   {
@@ -21,7 +22,7 @@ const MOCK_ADMIN_PACKAGES = [
     name: "Royal Diamond Wedding",
     category: "Makeup",
     price: 15000000,
-    description: "Makeup pengantin premium, melati, & retouch 3x",
+    description: "Makeup pengantin premium, melati asli, & retouch 3x",
     imageUrl: "https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=600"
   },
   {
@@ -34,12 +35,21 @@ const MOCK_ADMIN_PACKAGES = [
   }
 ];
 
+const MOCK_ADMIN_INVENTORY = [
+  { id: "INV-001", jenis: "Aksesoris", namaItem: "Panggung Utama 4x2m", spesifikasi: "Modul panggung karpet merah tinggi 50cm", hargaSewaUnit: 750000 },
+  { id: "INV-002", jenis: "Aksesoris", namaItem: "Tenda Semi Dekorasi", spesifikasi: "Ukuran per lokal 3x6m termasuk kain plafon", hargaSewaUnit: 1200000 },
+  { id: "INV-003", jenis: "Aksesoris", namaItem: "Kursi Futura + Cover", spesifikasi: "Kursi futura besi lapis cover putih & pita", hargaSewaUnit: 15000 },
+  { id: "INV-004", jenis: "Makeup", namaItem: "Makeup Pengantin Akad & Resepsi", spesifikasi: "Pengantin Pria & Wanita (Free Melati Asli)", hargaSewaUnit: 3500000 },
+  { id: "INV-005", jenis: "Dekorasi", namaItem: "Pelaminan Luxury Rose Gold 8m", spesifikasi: "Fresh Flowers, Standing Flowers & Lighting FX", hargaSewaUnit: 8500000 }
+];
+
 document.addEventListener("DOMContentLoaded", () => {
   applyDynamicBrandingAdmin();
   setupPasscodeAuth();
   setupTabNavigation();
   setupFiltersAndSearch();
   setupPackageForm();
+  setupInventoryForm();
   setupSettingsAndLicense();
   checkLicenseGuardOnLoad();
 });
@@ -87,6 +97,7 @@ function setupPasscodeAuth() {
     dashboardContent.classList.remove("hidden");
     loadAdminData();
     loadPackagesData();
+    loadInventoryData();
   }
 
   if (form) {
@@ -105,6 +116,7 @@ function setupPasscodeAuth() {
         dashboardContent.classList.remove("hidden");
         loadAdminData();
         loadPackagesData();
+        loadInventoryData();
       } else {
         passcodeError.classList.remove("hidden");
       }
@@ -122,19 +134,24 @@ function setupPasscodeAuth() {
 function setupTabNavigation() {
   const tabBookingsBtn = document.getElementById("tabBookingsBtn");
   const tabPackagesBtn = document.getElementById("tabPackagesBtn");
+  const tabInventoryBtn = document.getElementById("tabInventoryBtn");
   const tabSettingsBtn = document.getElementById("tabSettingsBtn");
 
   const viewBookings = document.getElementById("viewBookings");
   const viewPackages = document.getElementById("viewPackages");
+  const viewInventory = document.getElementById("viewInventory");
   const viewSettings = document.getElementById("viewSettings");
 
   function resetTabStyles() {
-    tabBookingsBtn.className = "py-4 px-5 text-xs font-extrabold uppercase tracking-wider text-[#E8C5C8] hover:text-[#F7E7CE] flex items-center gap-2 cursor-pointer shrink-0";
-    tabPackagesBtn.className = "py-4 px-5 text-xs font-extrabold uppercase tracking-wider text-[#E8C5C8] hover:text-[#F7E7CE] flex items-center gap-2 cursor-pointer shrink-0";
-    tabSettingsBtn.className = "py-4 px-5 text-xs font-extrabold uppercase tracking-wider text-[#E8C5C8] hover:text-[#F7E7CE] flex items-center gap-2 cursor-pointer shrink-0";
+    const inactiveClass = "py-4 px-5 text-xs font-extrabold uppercase tracking-wider text-[#E8C5C8] hover:text-[#F7E7CE] flex items-center gap-2 cursor-pointer shrink-0";
+    tabBookingsBtn.className = inactiveClass;
+    tabPackagesBtn.className = inactiveClass;
+    if (tabInventoryBtn) tabInventoryBtn.className = inactiveClass;
+    tabSettingsBtn.className = inactiveClass;
 
     viewBookings.classList.add("hidden");
     viewPackages.classList.add("hidden");
+    if (viewInventory) viewInventory.classList.add("hidden");
     viewSettings.classList.add("hidden");
   }
 
@@ -143,6 +160,8 @@ function setupTabNavigation() {
     tabSettingsBtn.className = "py-4 px-5 text-xs font-extrabold uppercase tracking-wider border-b-4 border-[#F7E7CE] text-[#F7E7CE] flex items-center gap-2 cursor-pointer shrink-0";
     viewSettings.classList.remove("hidden");
   }
+
+  const activeTabClass = "py-4 px-5 text-xs font-extrabold uppercase tracking-wider border-b-4 border-[#F7E7CE] text-[#F7E7CE] flex items-center gap-2 cursor-pointer shrink-0";
 
   if (tabBookingsBtn && tabPackagesBtn && tabSettingsBtn) {
     tabBookingsBtn.addEventListener("click", () => {
@@ -153,7 +172,7 @@ function setupTabNavigation() {
         return;
       }
       resetTabStyles();
-      tabBookingsBtn.className = "py-4 px-5 text-xs font-extrabold uppercase tracking-wider border-b-4 border-[#F7E7CE] text-[#F7E7CE] flex items-center gap-2 cursor-pointer shrink-0";
+      tabBookingsBtn.className = activeTabClass;
       viewBookings.classList.remove("hidden");
     });
 
@@ -165,9 +184,23 @@ function setupTabNavigation() {
         return;
       }
       resetTabStyles();
-      tabPackagesBtn.className = "py-4 px-5 text-xs font-extrabold uppercase tracking-wider border-b-4 border-[#F7E7CE] text-[#F7E7CE] flex items-center gap-2 cursor-pointer shrink-0";
+      tabPackagesBtn.className = activeTabClass;
       viewPackages.classList.remove("hidden");
     });
+
+    if (tabInventoryBtn) {
+      tabInventoryBtn.addEventListener("click", () => {
+        const lic = CONFIG.checkLicenseStatus();
+        if (lic.isExpired) {
+          showToast("🛑 Aplikasi Terkunci! Masa trial/lisensi telah habis. Harap aktivasi di Tab Pengaturan.");
+          switchToSettingsTab();
+          return;
+        }
+        resetTabStyles();
+        tabInventoryBtn.className = activeTabClass;
+        viewInventory.classList.remove("hidden");
+      });
+    }
 
     tabSettingsBtn.addEventListener("click", () => {
       switchToSettingsTab();
@@ -191,15 +224,23 @@ function checkLicenseGuardOnLoad() {
 
 function disableOperationalActions(disabled) {
   const addNewPackageBtn = document.getElementById("addNewPackageBtn");
-  if (addNewPackageBtn) {
-    addNewPackageBtn.disabled = disabled;
-    if (disabled) {
-      addNewPackageBtn.classList.add("opacity-50", "cursor-not-allowed");
-    } else {
-      addNewPackageBtn.classList.remove("opacity-50", "cursor-not-allowed");
+  const addNewInventoryBtn = document.getElementById("addNewInventoryBtn");
+
+  [addNewPackageBtn, addNewInventoryBtn].forEach(btn => {
+    if (btn) {
+      btn.disabled = disabled;
+      if (disabled) {
+        btn.classList.add("opacity-50", "cursor-not-allowed");
+      } else {
+        btn.classList.remove("opacity-50", "cursor-not-allowed");
+      }
     }
-  }
+  });
 }
+
+// ==========================================
+// BOOKINGS MANAGEMENT LOGIC
+// ==========================================
 
 async function loadAdminData() {
   const tableBody = document.getElementById("bookingsTableBody");
@@ -281,6 +322,38 @@ function renderBookingsTable(data) {
   lucide.createIcons();
 }
 
+window.updateStatus = async function(bookingId, newStatus) {
+  try {
+    const payload = {
+      action: "updatePaymentStatus",
+      passcode: CONFIG.getAdminPasscode(),
+      bookingId: bookingId,
+      newStatus: newStatus
+    };
+
+    await fetch(CONFIG.GAS_API_URL, {
+      method: "POST",
+      headers: { "Content-Type": "text/plain;charset=utf-8" },
+      body: JSON.stringify(payload)
+    });
+
+    const target = allBookingsData.find(b => b.id === bookingId);
+    if (target) target.paymentStatus = newStatus;
+    updateStatsSummary(allBookingsData);
+    renderBookingsTable(allBookingsData);
+    showToast(`Status booking ${bookingId} diperbarui!`);
+  } catch (err) {
+    const target = allBookingsData.find(b => b.id === bookingId);
+    if (target) target.paymentStatus = newStatus;
+    updateStatsSummary(allBookingsData);
+    renderBookingsTable(allBookingsData);
+  }
+};
+
+// ==========================================
+// PACKAGES MANAGEMENT LOGIC & DETAIL MODAL
+// ==========================================
+
 async function loadPackagesData() {
   const tableBody = document.getElementById("packagesTableBody");
   if (!tableBody) return;
@@ -321,6 +394,9 @@ function renderPackagesTable(data) {
       <td class="py-4 px-6 font-mono font-extrabold text-xs" style="color: #F7E7CE !important;">Rp ${item.price ? item.price.toLocaleString("id-ID") : 0}</td>
       <td class="py-4 px-6 font-medium truncate max-w-xs text-xs" style="color: #E8C5C8 !important;">${item.description}</td>
       <td class="py-4 px-6 text-center space-x-2">
+        <button onclick="viewPackageDetail('${item.id}')" class="px-3 py-1.5 rounded-lg bg-rose-900/60 border border-[#B76E79] text-[#F7E7CE] text-[11px] font-extrabold hover:bg-[#800020] cursor-pointer">
+          Detail
+        </button>
         <button ${disabledAttr} onclick="editPackage('${item.id}')" class="px-3 py-1.5 rounded-lg bg-amber-500/30 border border-amber-400 text-amber-200 text-[11px] font-extrabold hover:bg-amber-500/50 cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed">
           Edit
         </button>
@@ -333,6 +409,76 @@ function renderPackagesTable(data) {
 
   lucide.createIcons();
 }
+
+window.viewPackageDetail = function(id) {
+  const item = allPackagesData.find(p => p.id === id);
+  if (!item) return;
+
+  document.getElementById("detailPkgCategory").innerText = item.category || "PAKET";
+  document.getElementById("detailPkgName").innerText = item.name;
+  document.getElementById("detailPkgPrice").innerText = `Rp ${(item.price || 0).toLocaleString("id-ID")}`;
+  document.getElementById("detailPkgDescription").innerText = item.description || "Tidak ada deskripsi rincian.";
+  document.getElementById("detailPkgImage").src = item.imageUrl || "https://images.unsplash.com/photo-1519741497674-611481863552?w=600";
+
+  document.getElementById("packageDetailModal").classList.remove("hidden");
+};
+
+window.closePackageDetailModal = function() {
+  document.getElementById("packageDetailModal").classList.add("hidden");
+};
+
+window.editPackage = function(id) {
+  const lic = CONFIG.checkLicenseStatus();
+  if (lic.isExpired) {
+    showToast("🛑 Fitur Terkunci! Silakan aktifkan lisensi di Tab Pengaturan.");
+    return;
+  }
+
+  const item = allPackagesData.find(p => p.id === id);
+  if (!item) return;
+
+  document.getElementById("modalPackageTitle").innerText = "Edit Paket Layanan";
+  document.getElementById("pkgId").value = item.id;
+  document.getElementById("pkgName").value = item.name;
+  document.getElementById("pkgCategory").value = item.category;
+  document.getElementById("pkgPrice").value = item.price;
+  document.getElementById("pkgImageUrl").value = item.imageUrl || "";
+  document.getElementById("pkgDescription").value = item.description || "";
+
+  document.getElementById("packageModal").classList.remove("hidden");
+};
+
+window.deletePackage = async function(id) {
+  const lic = CONFIG.checkLicenseStatus();
+  if (lic.isExpired) {
+    showToast("🛑 Fitur Terkunci! Silakan aktifkan lisensi di Tab Pengaturan.");
+    return;
+  }
+
+  if (!confirm("Apakah Anda yakin ingin menghapus paket ini?")) return;
+
+  try {
+    const payload = {
+      action: "deletePackage",
+      passcode: CONFIG.getAdminPasscode(),
+      packageId: id
+    };
+
+    const res = await fetch(CONFIG.GAS_API_URL, {
+      method: "POST",
+      headers: { "Content-Type": "text/plain;charset=utf-8" },
+      body: JSON.stringify(payload)
+    });
+
+    const result = await res.json();
+    showToast(result.message || "Paket berhasil dihapus!");
+    loadPackagesData();
+  } catch (err) {
+    allPackagesData = allPackagesData.filter(p => p.id !== id);
+    renderPackagesTable(allPackagesData);
+    showToast("Paket berhasil dihapus!");
+  }
+};
 
 function setupPackageForm() {
   const addNewBtn = document.getElementById("addNewPackageBtn");
@@ -402,9 +548,207 @@ function setupPackageForm() {
   }
 }
 
-function closePackageModal() {
+window.closePackageModal = function() {
   document.getElementById("packageModal").classList.add("hidden");
+};
+
+// ==========================================
+// INVENTORY MANAGEMENT LOGIC (AKSESORIS, MUA & DEKOR)
+// ==========================================
+
+async function loadInventoryData() {
+  const tableBody = document.getElementById("inventoryTableBody");
+  if (!tableBody) return;
+
+  try {
+    const res = await fetch(`${CONFIG.GAS_API_URL}?action=getInventoryItems`);
+    const result = await res.json();
+
+    if (result.success && Array.isArray(result.data)) {
+      allInventoryData = result.data;
+    } else {
+      allInventoryData = MOCK_ADMIN_INVENTORY;
+    }
+  } catch (err) {
+    allInventoryData = MOCK_ADMIN_INVENTORY;
+  }
+
+  renderInventoryTable(allInventoryData);
 }
+
+function renderInventoryTable(data) {
+  const tableBody = document.getElementById("inventoryTableBody");
+  if (!tableBody) return;
+
+  if (data.length === 0) {
+    tableBody.innerHTML = `<tr><td colspan="6" class="py-8 text-center text-[#E8C5C8] font-extrabold">Belum ada item inventaris. Klik "Tambah Item Master".</td></tr>`;
+    return;
+  }
+
+  const lic = CONFIG.checkLicenseStatus();
+  const disabledAttr = lic.isExpired ? "disabled" : "";
+
+  tableBody.innerHTML = data.map(item => `
+    <tr class="hover:bg-[#280F16] transition-colors border-b border-[#B76E79]/20">
+      <td class="py-4 px-6 font-mono font-extrabold text-xs" style="color: #FFD700 !important;">${item.id}</td>
+      <td class="py-4 px-6"><span class="px-2.5 py-1 rounded-full text-[10px] bg-[#800020] border border-[#B76E79]/50 text-[#F7E7CE] uppercase font-extrabold">${item.jenis}</span></td>
+      <td class="py-4 px-6 font-extrabold text-xs" style="color: #FFFFFF !important;">${item.namaItem}</td>
+      <td class="py-4 px-6 font-medium text-xs" style="color: #E8C5C8 !important;">${item.spesifikasi}</td>
+      <td class="py-4 px-6 font-mono font-extrabold text-xs" style="color: #F7E7CE !important;">Rp ${item.hargaSewaUnit ? item.hargaSewaUnit.toLocaleString("id-ID") : 0}</td>
+      <td class="py-4 px-6 text-center space-x-2">
+        <button ${disabledAttr} onclick="editInventoryItem('${item.id}')" class="px-3 py-1.5 rounded-lg bg-amber-500/30 border border-amber-400 text-amber-200 text-[11px] font-extrabold hover:bg-amber-500/50 cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed">
+          Edit
+        </button>
+        <button ${disabledAttr} onclick="deleteInventoryItem('${item.id}')" class="px-3 py-1.5 rounded-lg bg-rose-500/30 border border-rose-400 text-rose-200 text-[11px] font-extrabold hover:bg-rose-500/50 cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed">
+          Hapus
+        </button>
+      </td>
+    </tr>
+  `).join("");
+
+  lucide.createIcons();
+}
+
+window.filterInventoryCategory = function(cat) {
+  const buttons = document.querySelectorAll(".inv-filter-btn");
+  buttons.forEach(b => {
+    b.className = "inv-filter-btn px-4 py-2 rounded-full text-xs font-extrabold border glass-card-dark text-[#E8C5C8] hover:text-[#F7E7CE]";
+  });
+
+  if (cat === "ALL") {
+    renderInventoryTable(allInventoryData);
+  } else {
+    const filtered = allInventoryData.filter(i => i.jenis.toLowerCase() === cat.toLowerCase());
+    renderInventoryTable(filtered);
+  }
+};
+
+window.editInventoryItem = function(id) {
+  const lic = CONFIG.checkLicenseStatus();
+  if (lic.isExpired) {
+    showToast("🛑 Fitur Terkunci! Silakan aktifkan lisensi di Tab Pengaturan.");
+    return;
+  }
+
+  const item = allInventoryData.find(i => i.id === id);
+  if (!item) return;
+
+  document.getElementById("modalInventoryTitle").innerText = "Edit Item Inventaris";
+  document.getElementById("invId").value = item.id;
+  document.getElementById("invJenis").value = item.jenis;
+  document.getElementById("invHarga").value = item.hargaSewaUnit;
+  document.getElementById("invNama").value = item.namaItem;
+  document.getElementById("invSpesifikasi").value = item.spesifikasi;
+
+  document.getElementById("inventoryModal").classList.remove("hidden");
+};
+
+window.deleteInventoryItem = async function(id) {
+  const lic = CONFIG.checkLicenseStatus();
+  if (lic.isExpired) {
+    showToast("🛑 Fitur Terkunci! Silakan aktifkan lisensi di Tab Pengaturan.");
+    return;
+  }
+
+  if (!confirm("Apakah Anda yakin ingin menghapus item inventaris ini?")) return;
+
+  try {
+    const payload = {
+      action: "deleteInventoryItem",
+      passcode: CONFIG.getAdminPasscode(),
+      itemId: id
+    };
+
+    const res = await fetch(CONFIG.GAS_API_URL, {
+      method: "POST",
+      headers: { "Content-Type": "text/plain;charset=utf-8" },
+      body: JSON.stringify(payload)
+    });
+
+    const result = await res.json();
+    showToast(result.message || "Item inventaris berhasil dihapus!");
+    loadInventoryData();
+  } catch (err) {
+    allInventoryData = allInventoryData.filter(i => i.id !== id);
+    renderInventoryTable(allInventoryData);
+    showToast("Item inventaris berhasil dihapus!");
+  }
+};
+
+function setupInventoryForm() {
+  const addNewBtn = document.getElementById("addNewInventoryBtn");
+  const form = document.getElementById("inventoryForm");
+
+  if (addNewBtn) {
+    addNewBtn.addEventListener("click", () => {
+      const lic = CONFIG.checkLicenseStatus();
+      if (lic.isExpired) {
+        showToast("🛑 Fitur Terkunci! Silakan aktifkan lisensi di Tab Pengaturan.");
+        return;
+      }
+      document.getElementById("modalInventoryTitle").innerText = "Tambah Item Master Inventaris";
+      form.reset();
+      document.getElementById("invId").value = "";
+      document.getElementById("inventoryModal").classList.remove("hidden");
+    });
+  }
+
+  if (form) {
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const lic = CONFIG.checkLicenseStatus();
+      if (lic.isExpired) {
+        showToast("🛑 Fitur Terkunci! Silakan aktifkan lisensi di Tab Pengaturan.");
+        return;
+      }
+
+      const saveBtn = document.getElementById("saveInvBtn");
+      saveBtn.disabled = true;
+      saveBtn.innerText = "Menyimpan...";
+
+      const invData = {
+        id: document.getElementById("invId").value,
+        jenis: document.getElementById("invJenis").value,
+        hargaSewaUnit: Number(document.getElementById("invHarga").value) || 0,
+        namaItem: document.getElementById("invNama").value,
+        spesifikasi: document.getElementById("invSpesifikasi").value
+      };
+
+      try {
+        const payload = {
+          action: "saveInventoryItem",
+          passcode: CONFIG.getAdminPasscode(),
+          data: invData
+        };
+
+        const res = await fetch(CONFIG.GAS_API_URL, {
+          method: "POST",
+          headers: { "Content-Type": "text/plain;charset=utf-8" },
+          body: JSON.stringify(payload)
+        });
+
+        const result = await res.json();
+        showToast(result.message || "Item inventaris berhasil disimpan!");
+
+        closeInventoryModal();
+        loadInventoryData();
+      } catch (err) {
+        showToast("Gagal menyimpan item inventaris.");
+      } finally {
+        saveBtn.disabled = false;
+        saveBtn.innerText = "Simpan Item Inventaris";
+      }
+    });
+  }
+}
+
+window.closeInventoryModal = function() {
+  document.getElementById("inventoryModal").classList.add("hidden");
+};
+
+// ==========================================
+// SETTINGS & LICENSE LOGIC
+// ==========================================
 
 function setupSettingsAndLicense() {
   const brandingForm = document.getElementById("brandingForm");
@@ -460,7 +804,6 @@ function setupSettingsAndLicense() {
     });
   }
 
-  // ASYNC LIVE CLAIM LICENSING VIA K2C UNIVERSAL LICENSE HUB
   if (licenseForm) {
     licenseForm.addEventListener("submit", async (e) => {
       e.preventDefault();
