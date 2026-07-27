@@ -23,7 +23,8 @@ const MOCK_ADMIN_PACKAGES = [
     category: "Makeup",
     price: 15000000,
     description: "Makeup pengantin premium, melati asli, & retouch 3x",
-    imageUrl: "https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=600"
+    imageUrl: "https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=600",
+    itemComposition: "INV-004"
   },
   {
     id: "PKG-02",
@@ -31,16 +32,17 @@ const MOCK_ADMIN_PACKAGES = [
     category: "Dekorasi",
     price: 25000000,
     description: "Panggung 12m, Fresh Flowers, Photobooth & Gate",
-    imageUrl: "https://images.unsplash.com/photo-1519741497674-611481863552?w=600"
+    imageUrl: "https://images.unsplash.com/photo-1519741497674-611481863552?w=600",
+    itemComposition: "INV-001,INV-005"
   }
 ];
 
 const MOCK_ADMIN_INVENTORY = [
-  { id: "INV-001", jenis: "Aksesoris", namaItem: "Panggung Utama 4x2m", spesifikasi: "Modul panggung karpet merah tinggi 50cm", hargaSewaUnit: 750000 },
-  { id: "INV-002", jenis: "Aksesoris", namaItem: "Tenda Semi Dekorasi", spesifikasi: "Ukuran per lokal 3x6m termasuk kain plafon", hargaSewaUnit: 1200000 },
-  { id: "INV-003", jenis: "Aksesoris", namaItem: "Kursi Futura + Cover", spesifikasi: "Kursi futura besi lapis cover putih & pita", hargaSewaUnit: 15000 },
-  { id: "INV-004", jenis: "Makeup", namaItem: "Makeup Pengantin Akad & Resepsi", spesifikasi: "Pengantin Pria & Wanita (Free Melati Asli)", hargaSewaUnit: 3500000 },
-  { id: "INV-005", jenis: "Dekorasi", namaItem: "Pelaminan Luxury Rose Gold 8m", spesifikasi: "Fresh Flowers, Standing Flowers & Lighting FX", hargaSewaUnit: 8500000 }
+  { id: "INV-001", jenis: "Aksesoris", namaItem: "Panggung Utama 4x2m", spesifikasi: "Modul panggung karpet merah tinggi 50cm", hargaSewaUnit: 750000, imageUrl: "" },
+  { id: "INV-002", jenis: "Aksesoris", namaItem: "Tenda Semi Dekorasi", spesifikasi: "Ukuran per lokal 3x6m termasuk kain plafon", hargaSewaUnit: 1200000, imageUrl: "" },
+  { id: "INV-003", jenis: "Aksesoris", namaItem: "Kursi Futura + Cover", spesifikasi: "Kursi futura besi lapis cover putih & pita", hargaSewaUnit: 15000, imageUrl: "" },
+  { id: "INV-004", jenis: "Makeup", namaItem: "Makeup Pengantin Akad & Resepsi", spesifikasi: "Pengantin Pria & Wanita (Free Melati Asli)", hargaSewaUnit: 3500000, imageUrl: "" },
+  { id: "INV-005", jenis: "Dekorasi", namaItem: "Pelaminan Luxury Rose Gold 8m", spesifikasi: "Fresh Flowers, Standing Flowers & Lighting FX", hargaSewaUnit: 8500000, imageUrl: "" }
 ];
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -239,6 +241,74 @@ function disableOperationalActions(disabled) {
 }
 
 // ==========================================
+// GOOGLE DRIVE DIRECT FILE UPLOADER ENGINE
+// ==========================================
+
+async function uploadFileToDrive(fileInput, statusElementId, targetUrlInputId) {
+  const statusEl = document.getElementById(statusElementId);
+  const targetUrlInput = document.getElementById(targetUrlInputId);
+
+  if (!fileInput || !fileInput.files || fileInput.files.length === 0) {
+    if (statusEl) statusEl.innerText = "Pilih file gambar terlebih dahulu!";
+    return null;
+  }
+
+  const file = fileInput.files[0];
+  if (statusEl) statusEl.innerText = "⏳ Mengunggah ke Google Drive...";
+
+  return new Promise((resolve) => {
+    const reader = new FileReader();
+    reader.onload = async function(e) {
+      const rawBase64 = e.target.result.split(",")[1];
+      const payload = {
+        action: "uploadImage",
+        fileName: file.name,
+        mimeType: file.type,
+        base64Data: rawBase64
+      };
+
+      try {
+        const res = await fetch(CONFIG.GAS_API_URL, {
+          method: "POST",
+          headers: { "Content-Type": "text/plain;charset=utf-8" },
+          body: JSON.stringify(payload)
+        });
+
+        const result = await res.json();
+        if (result.success && result.imageUrl) {
+          if (targetUrlInput) targetUrlInput.value = result.imageUrl;
+          if (statusEl) {
+            statusEl.innerText = "✓ Gambar Berhasil Disimpan Di Google Drive!";
+            statusEl.className = "text-[10px] font-extrabold text-emerald-400 block";
+          }
+          showToast("✓ Foto berhasil di-upload ke Google Drive!");
+          resolve(result.imageUrl);
+        } else {
+          if (statusEl) statusEl.innerText = "✕ Gagal upload file ke Drive.";
+          showToast("Gagal upload file ke Drive");
+          resolve(null);
+        }
+      } catch (err) {
+        if (statusEl) statusEl.innerText = "✕ Error koneksi saat upload ke Drive.";
+        showToast("Error koneksi upload gambar.");
+        resolve(null);
+      }
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
+window.uploadPackageImageToDrive = function() {
+  const fileInput = document.getElementById("pkgImageFile");
+  uploadFileToDrive(fileInput, "uploadPkgStatus", "pkgImageUrl");
+};
+
+window.uploadInventoryImageToDrive = function() {
+  const fileInput = document.getElementById("invImageFile");
+  uploadFileToDrive(fileInput, "uploadInvStatus", "invImageUrl");
+};
+
+// ==========================================
 // BOOKINGS MANAGEMENT LOGIC
 // ==========================================
 
@@ -420,12 +490,71 @@ window.viewPackageDetail = function(id) {
   document.getElementById("detailPkgDescription").innerText = item.description || "Tidak ada deskripsi rincian.";
   document.getElementById("detailPkgImage").src = item.imageUrl || "https://images.unsplash.com/photo-1519741497674-611481863552?w=600";
 
+  // Build Item Composition Details
+  const compositionContainer = document.getElementById("detailPkgCompositionList");
+  if (compositionContainer) {
+    const rawIds = (item.itemComposition || "").split(",").map(i => i.trim()).filter(Boolean);
+    if (rawIds.length > 0) {
+      const itemsMatched = allInventoryData.filter(inv => rawIds.includes(inv.id));
+      compositionContainer.innerHTML = `<span class="text-[#F7E7CE] font-bold block mb-1">📦 Terdiri dari Item Master:</span>` +
+        itemsMatched.map(m => `
+          <div class="flex justify-between items-center bg-[#1A0D11] p-2 rounded-lg border border-[#B76E79]/20">
+            <span>• ${m.namaItem} (${m.jenis})</span>
+            <span class="font-mono text-[#FFD700]">Rp ${m.hargaSewaUnit.toLocaleString("id-ID")}</span>
+          </div>
+        `).join("");
+    } else {
+      compositionContainer.innerHTML = "";
+    }
+  }
+
   document.getElementById("packageDetailModal").classList.remove("hidden");
 };
 
 window.closePackageDetailModal = function() {
   document.getElementById("packageDetailModal").classList.add("hidden");
 };
+
+function populatePackageInventoryCheckboxes(selectedCompositionIds = "") {
+  const container = document.getElementById("pkgInventorySelection");
+  if (!container) return;
+
+  if (allInventoryData.length === 0) {
+    container.innerHTML = `<p class="text-[10px] text-[#E8C5C8] italic">Belum ada item di Master Inventaris. Tambahkan di Tab ke-3.</p>`;
+    return;
+  }
+
+  const selectedSet = new Set(selectedCompositionIds.split(",").map(s => s.trim()));
+
+  container.innerHTML = allInventoryData.map(item => {
+    const isChecked = selectedSet.has(item.id) ? "checked" : "";
+    return `
+      <label class="flex items-center justify-between p-2 rounded-xl bg-[#1A0D11] border border-[#B76E79]/30 hover:border-[#B76E79] cursor-pointer text-xs">
+        <div class="flex items-center gap-2">
+          <input type="checkbox" value="${item.id}" data-price="${item.hargaSewaUnit}" ${isChecked} class="pkg-inv-checkbox accent-[#B76E79] w-3.5 h-3.5">
+          <span class="font-bold text-[#FFFFFF]">${item.namaItem} <span class="text-[9px] text-[#E8C5C8]">(${item.jenis})</span></span>
+        </div>
+        <span class="font-mono text-[11px] text-[#FFD700] font-extrabold">+Rp ${item.hargaSewaUnit.toLocaleString("id-ID")}</span>
+      </label>
+    `;
+  }).join("");
+
+  // Attach change listeners to calculate combined price automatically
+  const checkboxes = container.querySelectorAll(".pkg-inv-checkbox");
+  checkboxes.forEach(chk => {
+    chk.addEventListener("change", () => {
+      let combinedPrice = 0;
+      checkboxes.forEach(c => {
+        if (chk.checked) {
+          combinedPrice += Number(c.getAttribute("data-price")) || 0;
+        }
+      });
+      if (combinedPrice > 0) {
+        document.getElementById("pkgPrice").value = combinedPrice;
+      }
+    });
+  });
+}
 
 window.editPackage = function(id) {
   const lic = CONFIG.checkLicenseStatus();
@@ -444,6 +573,8 @@ window.editPackage = function(id) {
   document.getElementById("pkgPrice").value = item.price;
   document.getElementById("pkgImageUrl").value = item.imageUrl || "";
   document.getElementById("pkgDescription").value = item.description || "";
+
+  populatePackageInventoryCheckboxes(item.itemComposition || "");
 
   document.getElementById("packageModal").classList.remove("hidden");
 };
@@ -494,6 +625,8 @@ function setupPackageForm() {
       document.getElementById("modalPackageTitle").innerText = "Tambah Paket Baru";
       form.reset();
       document.getElementById("pkgId").value = "";
+      document.getElementById("uploadPkgStatus").innerText = "";
+      populatePackageInventoryCheckboxes("");
       document.getElementById("packageModal").classList.remove("hidden");
     });
   }
@@ -511,13 +644,18 @@ function setupPackageForm() {
       saveBtn.disabled = true;
       saveBtn.innerText = "Menyimpan...";
 
+      // Get Selected Master Item IDs
+      const checkedBoxes = document.querySelectorAll(".pkg-inv-checkbox:checked");
+      const selectedItemIds = Array.from(checkedBoxes).map(cb => cb.value).join(",");
+
       const pkgData = {
         id: document.getElementById("pkgId").value,
         name: document.getElementById("pkgName").value,
         category: document.getElementById("pkgCategory").value,
         price: Number(document.getElementById("pkgPrice").value) || 0,
         imageUrl: document.getElementById("pkgImageUrl").value,
-        description: document.getElementById("pkgDescription").value
+        description: document.getElementById("pkgDescription").value,
+        itemComposition: selectedItemIds
       };
 
       try {
@@ -639,6 +777,7 @@ window.editInventoryItem = function(id) {
   document.getElementById("invHarga").value = item.hargaSewaUnit;
   document.getElementById("invNama").value = item.namaItem;
   document.getElementById("invSpesifikasi").value = item.spesifikasi;
+  document.getElementById("invImageUrl").value = item.imageUrl || "";
 
   document.getElementById("inventoryModal").classList.remove("hidden");
 };
@@ -689,6 +828,7 @@ function setupInventoryForm() {
       document.getElementById("modalInventoryTitle").innerText = "Tambah Item Master Inventaris";
       form.reset();
       document.getElementById("invId").value = "";
+      document.getElementById("uploadInvStatus").innerText = "";
       document.getElementById("inventoryModal").classList.remove("hidden");
     });
   }
@@ -711,7 +851,8 @@ function setupInventoryForm() {
         jenis: document.getElementById("invJenis").value,
         hargaSewaUnit: Number(document.getElementById("invHarga").value) || 0,
         namaItem: document.getElementById("invNama").value,
-        spesifikasi: document.getElementById("invSpesifikasi").value
+        spesifikasi: document.getElementById("invSpesifikasi").value,
+        imageUrl: document.getElementById("invImageUrl").value
       };
 
       try {
