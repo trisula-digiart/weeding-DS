@@ -41,10 +41,11 @@ document.addEventListener("DOMContentLoaded", () => {
   setupFiltersAndSearch();
   setupPackageForm();
   setupSettingsAndLicense();
+  checkLicenseGuardOnLoad();
 });
 
 /**
- * SHOW TOAST MESSAGE (REPLACES ALERT)
+ * SHOW TOAST MESSAGE
  */
 function showToast(msg) {
   const toast = document.getElementById("toastBox");
@@ -55,6 +56,8 @@ function showToast(msg) {
     setTimeout(() => {
       toast.classList.add("hidden");
     }, 3500);
+  } else {
+    alert(msg);
   }
 }
 
@@ -78,7 +81,6 @@ function setupPasscodeAuth() {
   const passcodeError = document.getElementById("passcodeError");
   const logoutBtn = document.getElementById("logoutBtn");
 
-  // Pre-fill fields with current settings
   const loginUser = document.getElementById("loginUsername");
   if (loginUser) loginUser.value = CONFIG.getAdminUsername();
 
@@ -119,6 +121,9 @@ function setupPasscodeAuth() {
   }
 }
 
+/**
+ * PENGUNCIAN TAB OPERASIONAL SAAT LISENSI EXPIRED
+ */
 function setupTabNavigation() {
   const tabBookingsBtn = document.getElementById("tabBookingsBtn");
   const tabPackagesBtn = document.getElementById("tabPackagesBtn");
@@ -138,24 +143,69 @@ function setupTabNavigation() {
     viewSettings.classList.add("hidden");
   }
 
+  function switchToSettingsTab() {
+    resetTabStyles();
+    tabSettingsBtn.className = "py-4 px-5 text-xs font-extrabold uppercase tracking-wider border-b-4 border-[#F7E7CE] text-[#F7E7CE] flex items-center gap-2 cursor-pointer shrink-0";
+    viewSettings.classList.remove("hidden");
+  }
+
   if (tabBookingsBtn && tabPackagesBtn && tabSettingsBtn) {
     tabBookingsBtn.addEventListener("click", () => {
+      const lic = CONFIG.checkLicenseStatus();
+      if (lic.isExpired) {
+        showToast("🛑 Aplikasi Terkunci! Masa trial/lisensi telah habis. Harap aktivasi di Tab Pengaturan.");
+        switchToSettingsTab();
+        return;
+      }
       resetTabStyles();
       tabBookingsBtn.className = "py-4 px-5 text-xs font-extrabold uppercase tracking-wider border-b-4 border-[#F7E7CE] text-[#F7E7CE] flex items-center gap-2 cursor-pointer shrink-0";
       viewBookings.classList.remove("hidden");
     });
 
     tabPackagesBtn.addEventListener("click", () => {
+      const lic = CONFIG.checkLicenseStatus();
+      if (lic.isExpired) {
+        showToast("🛑 Aplikasi Terkunci! Masa trial/lisensi telah habis. Harap aktivasi di Tab Pengaturan.");
+        switchToSettingsTab();
+        return;
+      }
       resetTabStyles();
       tabPackagesBtn.className = "py-4 px-5 text-xs font-extrabold uppercase tracking-wider border-b-4 border-[#F7E7CE] text-[#F7E7CE] flex items-center gap-2 cursor-pointer shrink-0";
       viewPackages.classList.remove("hidden");
     });
 
     tabSettingsBtn.addEventListener("click", () => {
-      resetTabStyles();
-      tabSettingsBtn.className = "py-4 px-5 text-xs font-extrabold uppercase tracking-wider border-b-4 border-[#F7E7CE] text-[#F7E7CE] flex items-center gap-2 cursor-pointer shrink-0";
-      viewSettings.classList.remove("hidden");
+      switchToSettingsTab();
     });
+  }
+}
+
+/**
+ * CHECK LICENSE GUARD ON ADMIN LOAD
+ */
+function checkLicenseGuardOnLoad() {
+  const lic = CONFIG.checkLicenseStatus();
+  if (lic.isExpired) {
+    const tabSettingsBtn = document.getElementById("tabSettingsBtn");
+    if (tabSettingsBtn) {
+      tabSettingsBtn.click();
+    }
+    disableOperationalActions(true);
+    showToast("🛑 Masa Trial/Lisensi Telah Habis! Fitur operasional dinonaktifkan.");
+  } else {
+    disableOperationalActions(false);
+  }
+}
+
+function disableOperationalActions(disabled) {
+  const addNewPackageBtn = document.getElementById("addNewPackageBtn");
+  if (addNewPackageBtn) {
+    addNewPackageBtn.disabled = disabled;
+    if (disabled) {
+      addNewPackageBtn.classList.add("opacity-50", "cursor-not-allowed");
+    } else {
+      addNewPackageBtn.classList.remove("opacity-50", "cursor-not-allowed");
+    }
   }
 }
 
@@ -201,6 +251,9 @@ function renderBookingsTable(data) {
     return;
   }
 
+  const lic = CONFIG.checkLicenseStatus();
+  const disabledAttr = lic.isExpired ? "disabled" : "";
+
   tableBody.innerHTML = data.map(item => {
     let statusBadgeClass = "bg-amber-500/20 text-amber-300 border-amber-500/50 font-extrabold";
     if (item.paymentStatus === "DP") statusBadgeClass = "bg-cyan-500/20 text-cyan-300 border-cyan-500/50 font-extrabold";
@@ -223,7 +276,7 @@ function renderBookingsTable(data) {
         <td class="py-4 px-6 font-mono font-extrabold" style="color: #FFD700 !important;">Rp ${item.totalEstimate ? item.totalEstimate.toLocaleString("id-ID") : 0}</td>
         <td class="py-4 px-6"><span class="px-2.5 py-1 rounded-full text-[10px] font-extrabold border uppercase ${statusBadgeClass}">${item.paymentStatus}</span></td>
         <td class="py-4 px-6 text-center">
-          <select onchange="updateStatus('${item.id}', this.value)" class="bg-[#120A0C] border border-[#B76E79]/50 rounded-lg px-2 py-1 text-[11px] font-extrabold focus:outline-none" style="color: #FFFFFF !important;">
+          <select ${disabledAttr} onchange="updateStatus('${item.id}', this.value)" class="bg-[#120A0C] border border-[#B76E79]/50 rounded-lg px-2 py-1 text-[11px] font-extrabold focus:outline-none" style="color: #FFFFFF !important;">
             <option value="Pending" ${item.paymentStatus === "Pending" ? "selected" : ""}>Pending</option>
             <option value="DP" ${item.paymentStatus === "DP" ? "selected" : ""}>DP</option>
             <option value="Lunas" ${item.paymentStatus === "Lunas" ? "selected" : ""}>Lunas</option>
@@ -237,6 +290,12 @@ function renderBookingsTable(data) {
 }
 
 async function updateStatus(bookingId, newStatus) {
+  const lic = CONFIG.checkLicenseStatus();
+  if (lic.isExpired) {
+    showToast("🛑 Fitur Terkunci! Silakan aktifkan lisensi di Tab Pengaturan.");
+    return;
+  }
+
   try {
     const payload = {
       action: "updatePaymentStatus",
@@ -293,6 +352,9 @@ function renderPackagesTable(data) {
     return;
   }
 
+  const lic = CONFIG.checkLicenseStatus();
+  const disabledAttr = lic.isExpired ? "disabled" : "";
+
   tableBody.innerHTML = data.map(item => `
     <tr class="hover:bg-[#280F16] transition-colors border-b border-[#B76E79]/20">
       <td class="py-4 px-6 font-mono font-extrabold text-xs" style="color: #FFD700 !important;">${item.id}</td>
@@ -301,10 +363,10 @@ function renderPackagesTable(data) {
       <td class="py-4 px-6 font-mono font-extrabold text-xs" style="color: #F7E7CE !important;">Rp ${item.price ? item.price.toLocaleString("id-ID") : 0}</td>
       <td class="py-4 px-6 font-medium truncate max-w-xs text-xs" style="color: #E8C5C8 !important;">${item.description}</td>
       <td class="py-4 px-6 text-center space-x-2">
-        <button onclick="editPackage('${item.id}')" class="px-3 py-1.5 rounded-lg bg-amber-500/30 border border-amber-400 text-amber-200 text-[11px] font-extrabold hover:bg-amber-500/50 cursor-pointer">
+        <button ${disabledAttr} onclick="editPackage('${item.id}')" class="px-3 py-1.5 rounded-lg bg-amber-500/30 border border-amber-400 text-amber-200 text-[11px] font-extrabold hover:bg-amber-500/50 cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed">
           Edit
         </button>
-        <button onclick="deletePackage('${item.id}')" class="px-3 py-1.5 rounded-lg bg-rose-500/30 border border-rose-400 text-rose-200 text-[11px] font-extrabold hover:bg-rose-500/50 cursor-pointer">
+        <button ${disabledAttr} onclick="deletePackage('${item.id}')" class="px-3 py-1.5 rounded-lg bg-rose-500/30 border border-rose-400 text-rose-200 text-[11px] font-extrabold hover:bg-rose-500/50 cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed">
           Hapus
         </button>
       </td>
@@ -320,6 +382,11 @@ function setupPackageForm() {
 
   if (addNewBtn) {
     addNewBtn.addEventListener("click", () => {
+      const lic = CONFIG.checkLicenseStatus();
+      if (lic.isExpired) {
+        showToast("🛑 Fitur Terkunci! Silakan aktifkan lisensi di Tab Pengaturan.");
+        return;
+      }
       document.getElementById("modalPackageTitle").innerText = "Tambah Paket Baru";
       form.reset();
       document.getElementById("pkgId").value = "";
@@ -330,6 +397,12 @@ function setupPackageForm() {
   if (form) {
     form.addEventListener("submit", async (e) => {
       e.preventDefault();
+      const lic = CONFIG.checkLicenseStatus();
+      if (lic.isExpired) {
+        showToast("🛑 Fitur Terkunci! Silakan aktifkan lisensi di Tab Pengaturan.");
+        return;
+      }
+
       const saveBtn = document.getElementById("savePkgBtn");
       saveBtn.disabled = true;
       saveBtn.innerText = "Menyimpan...";
@@ -376,6 +449,12 @@ function closePackageModal() {
 }
 
 function editPackage(id) {
+  const lic = CONFIG.checkLicenseStatus();
+  if (lic.isExpired) {
+    showToast("🛑 Fitur Terkunci! Silakan aktifkan lisensi di Tab Pengaturan.");
+    return;
+  }
+
   const item = allPackagesData.find(p => p.id === id);
   if (!item) return;
 
@@ -391,6 +470,12 @@ function editPackage(id) {
 }
 
 async function deletePackage(id) {
+  const lic = CONFIG.checkLicenseStatus();
+  if (lic.isExpired) {
+    showToast("🛑 Fitur Terkunci! Silakan aktifkan lisensi di Tab Pengaturan.");
+    return;
+  }
+
   try {
     const payload = {
       action: "deletePackage",
@@ -419,7 +504,6 @@ function setupSettingsAndLicense() {
   const copyHwidBtn = document.getElementById("copyHwidBtn");
   const resetLicenseBtn = document.getElementById("resetLicenseBtn");
 
-  // Load current values
   const settingBrandName = document.getElementById("settingBrandName");
   const settingUsername = document.getElementById("settingUsername");
   const settingPasscode = document.getElementById("settingPasscode");
@@ -430,7 +514,6 @@ function setupSettingsAndLicense() {
 
   updateLicenseUI();
 
-  // Branding submit
   if (brandingForm) {
     brandingForm.addEventListener("submit", (e) => {
       e.preventDefault();
@@ -442,7 +525,6 @@ function setupSettingsAndLicense() {
     });
   }
 
-  // Credentials submit
   if (credentialsForm) {
     credentialsForm.addEventListener("submit", (e) => {
       e.preventDefault();
@@ -455,7 +537,6 @@ function setupSettingsAndLicense() {
     });
   }
 
-  // Copy HWID with document.execCommand('copy')
   if (copyHwidBtn) {
     copyHwidBtn.addEventListener("click", () => {
       const hwidText = CONFIG.getHWID();
@@ -470,14 +551,18 @@ function setupSettingsAndLicense() {
     });
   }
 
-  // License submit
   if (licenseForm) {
     licenseForm.addEventListener("submit", (e) => {
       e.preventDefault();
       const serialKey = document.getElementById("serialKeyInput").value;
-      CONFIG.setLicenseSerial(serialKey);
-      updateLicenseUI();
-      showToast("Serial Key Lisensi Berhasil Diverifikasi!");
+      
+      if (CONFIG.setLicenseSerial(serialKey)) {
+        updateLicenseUI();
+        disableOperationalActions(false);
+        showToast("✓ Serial Key Lisensi Berhasil Diverifikasi & Diaktifkan!");
+      } else {
+        showToast("✕ Serial Key tidak valid!");
+      }
     });
   }
 
@@ -486,13 +571,14 @@ function setupSettingsAndLicense() {
       CONFIG.setLicenseSerial("");
       document.getElementById("serialKeyInput").value = "";
       updateLicenseUI();
+      checkLicenseGuardOnLoad();
       showToast("Lisensi di-reset ke Mode Trial!");
     });
   }
 }
 
 /**
- * UPDATE LICENSE STATUS DISPLAY IN SETTINGS TAB
+ * UPDATE LICENSE STATUS DISPLAY IN SETTINGS TAB & REAL-TIME DAYS CALCULATION
  */
 function updateLicenseUI() {
   const hwidDisplay = document.getElementById("hwidDisplay");
@@ -508,19 +594,26 @@ function updateLicenseUI() {
 
   if (licenseBadge && licenseStatusText) {
     if (lic.status === "LICENSED") {
-      licenseBadge.innerText = "VERIFIED PREMIUM";
-      licenseBadge.className = "px-3 py-1 rounded-full text-[10px] font-extrabold uppercase border bg-emerald-500/20 text-emerald-300 border-emerald-500/40";
-      licenseStatusText.innerText = "✓ Lisensi Resmi Aktif (Lifetime Verified by K2C License Hub)";
-      licenseStatusText.className = "text-xs font-bold text-emerald-300";
+      if (lic.type === "LIFETIME") {
+        licenseBadge.innerText = "VERIFIED PREMIUM";
+        licenseBadge.className = "px-3 py-1 rounded-full text-[10px] font-extrabold uppercase border bg-emerald-500/20 text-emerald-300 border-emerald-500/40";
+        licenseStatusText.innerText = "✓ Lisensi Resmi Aktif (Lifetime Verified by K2C License Hub)";
+        licenseStatusText.className = "text-xs font-bold text-emerald-300";
+      } else {
+        licenseBadge.innerText = `ACTIVE (${lic.daysLeft} HARI)`;
+        licenseBadge.className = "px-3 py-1 rounded-full text-[10px] font-extrabold uppercase border bg-emerald-500/20 text-emerald-300 border-emerald-500/40";
+        licenseStatusText.innerText = `✓ Lisensi Resmi Aktif: Sisa Masa Aktif ${lic.daysLeft} Hari Lagi (Verified by K2C Hub).`;
+        licenseStatusText.className = "text-xs font-bold text-emerald-300";
+      }
     } else if (lic.status === "TRIAL") {
       licenseBadge.innerText = `TRIAL (${lic.daysLeft} HARI)`;
       licenseBadge.className = "px-3 py-1 rounded-full text-[10px] font-extrabold uppercase border bg-amber-500/20 text-amber-300 border-amber-500/40";
-      licenseStatusText.innerText = `⏳ Masa Trial Aktif: Sisa ${lic.daysLeft} Hari lagi. Silakan beli Serial Key resmi sebelum habis.`;
+      licenseStatusText.innerText = `⏳ Masa Trial Aktif: Sisa ${lic.daysLeft} Hari lagi. Silakan beli Serial Key resmi K2C sebelum habis.`;
       licenseStatusText.className = "text-xs font-bold text-amber-300";
     } else {
       licenseBadge.innerText = "EXPIRED";
       licenseBadge.className = "px-3 py-1 rounded-full text-[10px] font-extrabold uppercase border bg-rose-500/20 text-rose-300 border-rose-500/40";
-      licenseStatusText.innerText = "✕ Masa Trial 30 Hari Telah Habis! Aplikasi Terkunci.";
+      licenseStatusText.innerText = "✕ Masa Trial / Lisensi Telah Habis! Aplikasi Terkunci.";
       licenseStatusText.className = "text-xs font-bold text-rose-400";
     }
   }
