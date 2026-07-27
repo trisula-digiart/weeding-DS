@@ -11,7 +11,7 @@
 </head>
 <body class="bg-[#FFF5F7] text-[#1F050A] antialiased selection:bg-[#800020] selection:text-white floral-pattern">
 
-  <!-- NAVBAR CERAH -->
+  <!-- NAVBAR CERAH & NAVIGASI AKSI EKSPLISIT -->
   <nav class="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-md border-b border-[#800020]/20 shadow-sm">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 sm:h-20 flex items-center justify-between">
       <a href="#" class="flex items-center gap-2.5">
@@ -33,13 +33,14 @@
         <a href="#booking" class="hover:text-[#800020] transition-colors">Booking Jadwal</a>
       </div>
 
-      <div class="flex items-center gap-2">
-        <a href="admin.html" class="hidden sm:flex px-4 py-2 rounded-full border-2 border-[#800020] hover:bg-[#800020] hover:text-white text-[#800020] bg-white text-xs font-extrabold tracking-wider transition-all items-center gap-2 shadow-sm">
+      <!-- FIX PERBAIKAN TOMBOL PORTAL TIM (EKSPLISIT LINK ADMIN.HTML) -->
+      <div class="flex items-center gap-2 relative z-10">
+        <a href="admin.html" class="hidden sm:inline-flex cursor-pointer px-5 py-2.5 rounded-full border-2 border-[#800020] hover:bg-[#800020] hover:text-white text-[#800020] bg-white text-xs font-extrabold tracking-wider transition-all items-center gap-2 shadow-md">
           <i data-lucide="lock" class="w-3.5 h-3.5"></i>
           <span>Portal Tim</span>
         </a>
 
-        <button id="mobileMenuBtn" class="md:hidden p-2 rounded-xl bg-white border-2 border-[#800020] text-[#800020]">
+        <button id="mobileMenuBtn" class="md:hidden p-2 rounded-xl bg-white border-2 border-[#800020] text-[#800020] cursor-pointer">
           <i data-lucide="menu" class="w-5 h-5"></i>
         </button>
       </div>
@@ -87,7 +88,6 @@
           Kami siap membantu merangkai setiap rincian momen bahagia Anda. Mulai dari MUA profesional, busana pengantin elegan, panggung dekorasi mewah, hingga penataan acara yang sempurna.
         </p>
 
-        <!-- FIX TOMBOL CTA PERTAMA AGAR TEKS BERWARNA PUTIH TERANG DENGAN BACKGROUND BURGUNDY PEKAT -->
         <div class="pt-2 flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4">
           <a href="#calculator" class="w-full sm:w-auto px-8 py-4 rounded-full btn-primary-burgundy font-extrabold text-xs uppercase tracking-widest flex items-center justify-center gap-2 transition-all">
             <i data-lucide="calculator" class="w-4 h-4 text-white"></i>
@@ -136,7 +136,6 @@
         <h2 class="font-serif-luxury text-4xl sm:text-5xl font-bold text-gradient-rose">Pilihan Paket Eksklusif</h2>
       </div>
 
-      <!-- FIX TAB AKTIFFILTER AGAR LATAR BELAKANG BURGUNDY DENGAN TEKS PUTIH HIGH CONTRAST -->
       <div class="flex items-center justify-start sm:justify-center gap-2 overflow-x-auto pb-2 -mx-4 px-4 sm:mx-0 sm:px-0 no-scrollbar" id="categoryFilter">
         <button data-category="ALL" class="filter-btn active shrink-0 px-6 py-2.5 rounded-full text-xs font-extrabold tracking-wider transition-all btn-primary-burgundy shadow-md">Semua</button>
         <button data-category="Makeup" class="filter-btn shrink-0 px-6 py-2.5 rounded-full text-xs font-extrabold tracking-wider transition-all bg-white text-[#4A121E] border-2 border-[#800020]/30 hover:border-[#800020]">Makeup & Attire</button>
@@ -144,7 +143,6 @@
         <button data-category="Panggung" class="filter-btn shrink-0 px-6 py-2.5 rounded-full text-xs font-extrabold tracking-wider transition-all bg-white text-[#4A121E] border-2 border-[#800020]/30 hover:border-[#800020]">Panggung & Lighting</button>
       </div>
 
-      <!-- Portfolio Grid -->
       <div id="portfolioGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         <!-- Dynamic Cards -->
       </div>
@@ -272,7 +270,7 @@
   <!-- FOOTER -->
   <footer class="py-12 bg-white border-t-2 border-[#800020]/15 text-center text-xs text-[#4A121E] font-bold space-y-2 px-4">
     <p class="font-serif-luxury text-lg text-[#800020] font-bold">Aura Elegance Wedding Organizer</p>
-    <p>© 2026 K2c Komputindo. All Rights Reserved. High Contrast Edition.</p>
+    <p>© 2026 Aura Elegance. All Rights Reserved. High Contrast Edition.</p>
   </footer>
 
   <script src="assets/js/config.js"></script>
