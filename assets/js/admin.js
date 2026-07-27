@@ -691,7 +691,7 @@ function setupPackageForm() {
         loadPackagesData();
       } catch (err) {
         showToast("Gagal menyimpan paket ke server.");
-      } font-extrabold {
+      } finally {
         saveBtn.disabled = false;
         saveBtn.innerText = "Simpan Paket";
       }
