@@ -500,7 +500,7 @@ window.viewPackageDetail = function(id) {
         itemsMatched.map(m => `
           <div class="flex justify-between items-center bg-[#1A0D11] p-2 rounded-lg border border-[#B76E79]/20">
             <span>• ${m.namaItem} (${m.jenis})</span>
-            <span class="font-mono text-[#FFD700]">Rp ${m.hargaSewaUnit.toLocaleString("id-ID")}</span>
+            <span class="font-mono text-[#FFD700]">Rp ${(m.hargaSewaUnit || 0).toLocaleString("id-ID")}</span>
           </div>
         `).join("");
     } else {
@@ -515,6 +515,9 @@ window.closePackageDetailModal = function() {
   document.getElementById("packageDetailModal").classList.add("hidden");
 };
 
+/**
+ * POPULATE INVENTORY CHECKBOXES WITH REALTIME DYNAMIC PRICE RE-CALCULATION
+ */
 function populatePackageInventoryCheckboxes(selectedCompositionIds = "") {
   const container = document.getElementById("pkgInventorySelection");
   if (!container) return;
@@ -524,36 +527,46 @@ function populatePackageInventoryCheckboxes(selectedCompositionIds = "") {
     return;
   }
 
-  const selectedSet = new Set(selectedCompositionIds.split(",").map(s => s.trim()));
+  const selectedSet = new Set(selectedCompositionIds.split(",").map(s => s.trim()).filter(Boolean));
 
   container.innerHTML = allInventoryData.map(item => {
     const isChecked = selectedSet.has(item.id) ? "checked" : "";
     return `
       <label class="flex items-center justify-between p-2 rounded-xl bg-[#1A0D11] border border-[#B76E79]/30 hover:border-[#B76E79] cursor-pointer text-xs">
         <div class="flex items-center gap-2">
-          <input type="checkbox" value="${item.id}" data-price="${item.hargaSewaUnit}" ${isChecked} class="pkg-inv-checkbox accent-[#B76E79] w-3.5 h-3.5">
+          <input type="checkbox" value="${item.id}" data-price="${item.hargaSewaUnit || 0}" ${isChecked} class="pkg-inv-checkbox accent-[#B76E79] w-3.5 h-3.5">
           <span class="font-bold text-[#FFFFFF]">${item.namaItem} <span class="text-[9px] text-[#E8C5C8]">(${item.jenis})</span></span>
         </div>
-        <span class="font-mono text-[11px] text-[#FFD700] font-extrabold">+Rp ${item.hargaSewaUnit.toLocaleString("id-ID")}</span>
+        <span class="font-mono text-[11px] text-[#FFD700] font-extrabold">+Rp ${(item.hargaSewaUnit || 0).toLocaleString("id-ID")}</span>
       </label>
     `;
   }).join("");
 
-  // Attach change listeners to calculate combined price automatically
-  const checkboxes = container.querySelectorAll(".pkg-inv-checkbox");
-  checkboxes.forEach(chk => {
-    chk.addEventListener("change", () => {
-      let combinedPrice = 0;
-      checkboxes.forEach(c => {
-        if (chk.checked) {
-          combinedPrice += Number(c.getAttribute("data-price")) || 0;
-        }
-      });
-      if (combinedPrice > 0) {
-        document.getElementById("pkgPrice").value = combinedPrice;
+  // Recalculates sum of all checked checkboxes
+  function updateCombinedPrice() {
+    const checkboxes = container.querySelectorAll(".pkg-inv-checkbox");
+    let combinedPrice = 0;
+    let checkedCount = 0;
+    checkboxes.forEach(c => {
+      if (c.checked) {
+        combinedPrice += Number(c.getAttribute("data-price")) || 0;
+        checkedCount++;
       }
     });
+
+    if (checkedCount > 0) {
+      document.getElementById("pkgPrice").value = combinedPrice;
+    }
+  }
+
+  // Attach change listeners to every checkbox
+  const checkboxes = container.querySelectorAll(".pkg-inv-checkbox");
+  checkboxes.forEach(chk => {
+    chk.addEventListener("change", updateCombinedPrice);
   });
+
+  // Calculate price immediately upon loading modal
+  updateCombinedPrice();
 }
 
 window.editPackage = function(id) {
@@ -569,7 +582,7 @@ window.editPackage = function(id) {
   document.getElementById("modalPackageTitle").innerText = "Edit Paket Layanan";
   document.getElementById("pkgId").value = item.id;
   document.getElementById("pkgName").value = item.name;
-  document.getElementById("pkgCategory").value = item.category;
+  document.getElementById("pkgCategory").value = item.category || "Aksesoris";
   document.getElementById("pkgPrice").value = item.price;
   document.getElementById("pkgImageUrl").value = item.imageUrl || "";
   document.getElementById("pkgDescription").value = item.description || "";
@@ -678,7 +691,7 @@ function setupPackageForm() {
         loadPackagesData();
       } catch (err) {
         showToast("Gagal menyimpan paket ke server.");
-      } finally {
+      } font-extrabold {
         saveBtn.disabled = false;
         saveBtn.innerText = "Simpan Paket";
       }
