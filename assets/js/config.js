@@ -4,13 +4,14 @@
  */
 
 const CONFIG = {
-  // Endpoint Google Apps Script Web App
+  // Endpoint Google Apps Script Web App Khusus Database Wedding Organizer (Sheet Bookings/Packages)
   GAS_API_URL: "https://script.google.com/macros/s/AKfycbwNBkqK8Z9M5JctiwSsvaxoQKEt8sm6tvw6ps2S1gShf2WTDm10Ym-t4qEE3Z11n85f/exec",
   
-  // Endpoint Master Web K2C Universal License Hub Anda
+  // Endpoint Master Web K2C Universal License Hub Anda (SERVER PUSAT)
   K2C_HUB_API_URL: "https://script.google.com/macros/s/AKfycbyDPyK7B3CTdD7uw32wO0XcX2prmFeDGr-mhpIsogEjsJQ8w_rNOXFBPrhnnq3w2pMa/exec",
   
-  APP_ID: "K2C-WO",
+  // APP_ID Harus Sama Persis Dengan Yang Didaftarkan Di K2C Hub (K2C-WEDDING)
+  APP_ID: "K2C-WEDDING",
 
   // Theme Constants
   COLORS: {
@@ -89,7 +90,7 @@ const CONFIG = {
   },
 
   /**
-   * Mengklaim lisensi secara online ke K2C Universal License Hub
+   * Mengklaim lisensi secara online ke K2C Universal License Hub PUSAT
    */
   claimLicenseRemote: async function(serialKey) {
     if (!serialKey || serialKey.trim().length < 10) {
@@ -103,15 +104,16 @@ const CONFIG = {
     const hwid = this.getHWID();
 
     try {
-      // Mengirimkan request claim live ke backend / K2C License Hub
+      // Payload klaim live yang dikirim ke K2C Universal License Hub Pusat
       const payload = {
-        action: "verifyLicense",
+        action: "claimLicense",
         appId: this.APP_ID,
         serialKey: cleanSerial,
         hwid: hwid
       };
 
-      const res = await fetch(this.GAS_API_URL, {
+      // FIX: FETCH LANGSUNG KE URL SERVER PUSAT K2C HUB (Bukan GAS_API_URL Wedding)
+      const res = await fetch(this.K2C_HUB_API_URL, {
         method: "POST",
         headers: { "Content-Type": "text/plain;charset=utf-8" },
         body: JSON.stringify(payload)
@@ -120,7 +122,7 @@ const CONFIG = {
       const result = await res.json();
 
       if (result.success) {
-        // Simpan data klaim resmi jika terverifikasi oleh Hub
+        // Simpan data klaim resmi jika terverifikasi oleh Hub Pusat
         localStorage.setItem("wo_license_serial", cleanSerial);
         localStorage.setItem("wo_license_activation_date", new Date().toISOString());
         
@@ -145,6 +147,7 @@ const CONFIG = {
           message: result.message || "✓ Serial Key berhasil diverifikasi & diklaim untuk perangkat ini!"
         };
       } else {
+        // Jika klaim ditolak K2C Hub (misal: sudah pernah diklaim di HWID lain / App ID Mismatch)
         return {
           success: false,
           status: result.status || "INVALID",
@@ -152,35 +155,11 @@ const CONFIG = {
         };
       }
     } catch (err) {
-      // Offline / Pattern Fallback Validation jika server K2C belum terhubung
-      const isValidFormat = cleanSerial.startsWith("K2C-") || cleanSerial.startsWith("LIC-") || cleanSerial.includes("WO-2026");
-
-      if (isValidFormat) {
-        let durationDays = 30;
-        if (cleanSerial.endsWith("-30D") || cleanSerial.endsWith("-30")) durationDays = 30;
-        else if (cleanSerial.endsWith("-365D") || cleanSerial.endsWith("-365")) durationDays = 365;
-        else if (cleanSerial.includes("LIFETIME")) durationDays = 9999;
-
-        const expireDate = new Date();
-        expireDate.setDate(expireDate.getDate() + durationDays);
-
-        localStorage.setItem("wo_license_serial", cleanSerial);
-        localStorage.setItem("wo_license_activation_date", new Date().toISOString());
-        localStorage.setItem("wo_license_duration_days", durationDays.toString());
-        localStorage.setItem("wo_license_expires_at", expireDate.toISOString());
-
-        return {
-          success: true,
-          status: "LICENSED",
-          message: "✓ Serial Key Valid (Mode Verifikasi Standar K2C Hub)"
-        };
-      } else {
-        return {
-          success: false,
-          status: "INVALID",
-          message: "✕ Format Serial Key tidak dikenali oleh K2C Hub!"
-        };
-      }
+      return {
+        success: false,
+        status: "ERROR",
+        message: "✕ Gagal terhubung ke Server K2C License Hub! Periksa koneksi internet."
+      };
     }
   },
 
