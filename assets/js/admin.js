@@ -1,5 +1,5 @@
 /**
- * AURA ELEGANCE - ADMIN DASHBOARD LOGIC (CRUD ENHANCED)
+ * AURA ELEGANCE - ADMIN DASHBOARD LOGIC (HIGH CONTRAST EDITION)
  */
 
 let allBookingsData = [];
@@ -99,15 +99,15 @@ function setupTabNavigation() {
 
   if (tabBookingsBtn && tabPackagesBtn) {
     tabBookingsBtn.addEventListener("click", () => {
-      tabBookingsBtn.className = "py-4 px-4 text-xs font-bold uppercase tracking-wider border-b-2 border-[#B76E79] text-[#F7E7CE] flex items-center gap-2";
-      tabPackagesBtn.className = "py-4 px-4 text-xs font-bold uppercase tracking-wider text-slate-400 hover:text-slate-200 flex items-center gap-2";
+      tabBookingsBtn.className = "py-4 px-4 text-xs font-extrabold uppercase tracking-wider border-b-4 border-[#800020] text-[#800020] flex items-center gap-2";
+      tabPackagesBtn.className = "py-4 px-4 text-xs font-extrabold uppercase tracking-wider text-[#580015] hover:text-[#800020] flex items-center gap-2";
       viewBookings.classList.remove("hidden");
       viewPackages.classList.add("hidden");
     });
 
     tabPackagesBtn.addEventListener("click", () => {
-      tabPackagesBtn.className = "py-4 px-4 text-xs font-bold uppercase tracking-wider border-b-2 border-[#B76E79] text-[#F7E7CE] flex items-center gap-2";
-      tabBookingsBtn.className = "py-4 px-4 text-xs font-bold uppercase tracking-wider text-slate-400 hover:text-slate-200 flex items-center gap-2";
+      tabPackagesBtn.className = "py-4 px-4 text-xs font-extrabold uppercase tracking-wider border-b-4 border-[#800020] text-[#800020] flex items-center gap-2";
+      tabBookingsBtn.className = "py-4 px-4 text-xs font-extrabold uppercase tracking-wider text-[#580015] hover:text-[#800020] flex items-center gap-2";
       viewPackages.classList.remove("hidden");
       viewBookings.classList.add("hidden");
     });
@@ -155,33 +155,33 @@ function renderBookingsTable(data) {
   if (!tableBody) return;
 
   if (data.length === 0) {
-    tableBody.innerHTML = `<tr><td colspan="8" class="py-8 text-center text-slate-500">Tidak ada data booking.</td></tr>`;
+    tableBody.innerHTML = `<tr><td colspan="8" class="py-8 text-center text-[#580015] font-extrabold">Tidak ada data booking.</td></tr>`;
     return;
   }
 
   tableBody.innerHTML = data.map(item => {
-    let statusBadgeClass = "bg-amber-500/20 text-amber-300 border-amber-500/30";
-    if (item.paymentStatus === "DP") statusBadgeClass = "bg-cyan-500/20 text-cyan-300 border-cyan-500/30";
-    if (item.paymentStatus === "Lunas") statusBadgeClass = "bg-emerald-500/20 text-emerald-300 border-emerald-500/30";
+    let statusBadgeClass = "bg-amber-100 text-amber-900 border-amber-400 font-extrabold";
+    if (item.paymentStatus === "DP") statusBadgeClass = "bg-cyan-100 text-cyan-900 border-cyan-400 font-extrabold";
+    if (item.paymentStatus === "Lunas") statusBadgeClass = "bg-emerald-100 text-emerald-900 border-emerald-400 font-extrabold";
 
     const cleanPhone = item.phone ? item.phone.replace(/[^0-9]/g, "") : "";
     const waUrl = cleanPhone ? `https://wa.me/${cleanPhone}` : "#";
 
     return `
-      <tr class="hover:bg-[#1A0F12]/50 transition-colors">
-        <td class="py-4 px-6 font-mono text-[11px]"><span class="text-[#F7E7CE] font-bold block">${item.id}</span></td>
-        <td class="py-4 px-6 font-semibold text-slate-200">${item.clientName}</td>
+      <tr class="hover:bg-[#FFEBF0]/50 transition-colors">
+        <td class="py-4 px-6 font-mono text-[11px]"><span class="text-[#800020] font-extrabold block">${item.id}</span></td>
+        <td class="py-4 px-6 font-extrabold text-[#1F050A]">${item.clientName}</td>
         <td class="py-4 px-6">
-          <a href="${waUrl}" target="_blank" class="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-emerald-950/50 border border-emerald-500/30 text-emerald-400 text-[11px]">
+          <a href="${waUrl}" target="_blank" class="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-emerald-100 border border-emerald-500 text-emerald-900 font-bold text-[11px]">
             <i data-lucide="message-square" class="w-3 h-3"></i><span>${item.phone}</span>
           </a>
         </td>
-        <td class="py-4 px-6"><span class="text-[#F7E7CE] font-semibold block">${item.eventDate}</span><span class="text-[11px] text-slate-400">${item.location}</span></td>
-        <td class="py-4 px-6 text-slate-300">${item.packageSelected}</td>
-        <td class="py-4 px-6 font-mono font-bold text-gradient-rose">Rp ${item.totalEstimate ? item.totalEstimate.toLocaleString("id-ID") : 0}</td>
-        <td class="py-4 px-6"><span class="px-2.5 py-1 rounded-full text-[10px] font-bold border uppercase ${statusBadgeClass}">${item.paymentStatus}</span></td>
+        <td class="py-4 px-6"><span class="text-[#800020] font-extrabold block">${item.eventDate}</span><span class="text-[11px] text-[#4A121E] font-bold">${item.location}</span></td>
+        <td class="py-4 px-6 text-[#1F050A] font-extrabold">${item.packageSelected}</td>
+        <td class="py-4 px-6 font-mono font-extrabold text-[#800020]">Rp ${item.totalEstimate ? item.totalEstimate.toLocaleString("id-ID") : 0}</td>
+        <td class="py-4 px-6"><span class="px-2.5 py-1 rounded-full text-[10px] font-extrabold border uppercase ${statusBadgeClass}">${item.paymentStatus}</span></td>
         <td class="py-4 px-6 text-center">
-          <select onchange="updateStatus('${item.id}', this.value)" class="bg-[#120A0C] border border-[#B76E79]/40 rounded-lg px-2 py-1 text-[11px] text-slate-200 focus:outline-none">
+          <select onchange="updateStatus('${item.id}', this.value)" class="bg-white border-2 border-[#800020]/40 rounded-lg px-2 py-1 text-[11px] text-[#1F050A] font-extrabold focus:outline-none">
             <option value="Pending" ${item.paymentStatus === "Pending" ? "selected" : ""}>Pending</option>
             <option value="DP" ${item.paymentStatus === "DP" ? "selected" : ""}>DP</option>
             <option value="Lunas" ${item.paymentStatus === "Lunas" ? "selected" : ""}>Lunas</option>
@@ -222,7 +222,7 @@ async function updateStatus(bookingId, newStatus) {
 }
 
 /**
- * FETCH & RENDER PACKAGES (CRUD FITUR BARU)
+ * FETCH & RENDER PACKAGES (HIGH CONTRAST TABLE)
  */
 async function loadPackagesData() {
   const tableBody = document.getElementById("packagesTableBody");
@@ -249,22 +249,23 @@ function renderPackagesTable(data) {
   if (!tableBody) return;
 
   if (data.length === 0) {
-    tableBody.innerHTML = `<tr><td colspan="6" class="py-8 text-center text-slate-500">Belum ada paket. Klik "Tambah Paket Baru".</td></tr>`;
+    tableBody.innerHTML = `<tr><td colspan="6" class="py-8 text-center text-[#580015] font-extrabold">Belum ada paket. Klik "Tambah Paket Baru".</td></tr>`;
     return;
   }
 
+  // FIX TEKS ID PAKET & NAMA PAKET DIUBAH MENJADI BURGUNDY DEEP (#800020) & DARK (#1F050A)
   tableBody.innerHTML = data.map(item => `
-    <tr class="hover:bg-[#1A0F12]/50 transition-colors">
-      <td class="py-4 px-6 font-mono font-bold text-[#F7E7CE] text-[11px]">${item.id}</td>
-      <td class="py-4 px-6 font-bold text-slate-200">${item.name}</td>
-      <td class="py-4 px-6"><span class="px-2.5 py-1 rounded-full text-[10px] bg-[#800020]/40 border border-[#B76E79]/30 text-[#F7E7CE] uppercase font-bold">${item.category}</span></td>
-      <td class="py-4 px-6 font-mono font-bold text-gradient-rose">Rp ${item.price ? item.price.toLocaleString("id-ID") : 0}</td>
-      <td class="py-4 px-6 text-slate-400 truncate max-w-xs">${item.description}</td>
+    <tr class="hover:bg-[#FFEBF0]/50 transition-colors">
+      <td class="py-4 px-6 font-mono font-extrabold text-[#800020] text-xs">${item.id}</td>
+      <td class="py-4 px-6 font-extrabold text-[#1F050A] text-xs">${item.name}</td>
+      <td class="py-4 px-6"><span class="px-2.5 py-1 rounded-full text-[10px] bg-[#800020] text-white uppercase font-extrabold">${item.category}</span></td>
+      <td class="py-4 px-6 font-mono font-extrabold text-[#800020] text-xs">Rp ${item.price ? item.price.toLocaleString("id-ID") : 0}</td>
+      <td class="py-4 px-6 text-[#4A121E] font-bold truncate max-w-xs text-xs">${item.description}</td>
       <td class="py-4 px-6 text-center space-x-2">
-        <button onclick="editPackage('${item.id}')" class="px-3 py-1 rounded-lg bg-amber-500/20 border border-amber-500/30 text-amber-300 text-[11px] font-bold hover:bg-amber-500/40">
+        <button onclick="editPackage('${item.id}')" class="px-3 py-1 rounded-lg bg-amber-200 border border-amber-500 text-amber-900 text-[11px] font-extrabold hover:bg-amber-300">
           Edit
         </button>
-        <button onclick="deletePackage('${item.id}')" class="px-3 py-1 rounded-lg bg-rose-500/20 border border-rose-500/30 text-rose-300 text-[11px] font-bold hover:bg-rose-500/40">
+        <button onclick="deletePackage('${item.id}')" class="px-3 py-1 rounded-lg bg-rose-200 border border-rose-500 text-rose-900 text-[11px] font-extrabold hover:bg-rose-300">
           Hapus
         </button>
       </td>
