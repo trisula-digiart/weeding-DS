@@ -87,7 +87,7 @@
           </div>
           <h2 class="font-serif-luxury text-3xl sm:text-4xl font-bold text-gradient-rose">Selamat Datang, Tim <span class="dynamic-brand-name">AURA ELEGANCE</span></h2>
           <p class="text-xs text-[#E8C5C8] font-medium leading-relaxed">
-            Kelola data pemesanan klien, katalog master inventaris (Panggung, Tenda, Kursi, MUA & Dekorasi), paket layanan, serta aktivasi lisensi K2C Hub.
+            Kelola data pemesanan klien, katalog master inventaris (Panggung, Tenda, Kursi, MUA & Dekorasi), paket layanan, serta upload foto otomatis ke Google Drive.
           </p>
         </div>
 
@@ -414,7 +414,7 @@
 
   <!-- MODAL: ADD / EDIT PACKAGE -->
   <div id="packageModal" class="fixed inset-0 z-50 bg-[#0C0607]/80 backdrop-blur-md hidden flex items-center justify-center p-4">
-    <div class="glass-card-dark border border-[#B76E79] rounded-3xl w-full max-w-lg p-6 sm:p-8 space-y-6 shadow-2xl">
+    <div class="glass-card-dark border border-[#B76E79] rounded-3xl w-full max-w-xl p-6 sm:p-8 space-y-6 shadow-2xl max-h-[90vh] overflow-y-auto">
       <div class="flex items-center justify-between border-b border-[#B76E79]/30 pb-4">
         <h3 id="modalPackageTitle" class="font-serif-luxury text-2xl font-bold text-gradient-rose">Tambah Paket Baru</h3>
         <button onclick="closePackageModal()" class="text-[#B76E79] hover:text-white cursor-pointer">
@@ -440,18 +440,42 @@
             </select>
           </div>
           <div class="space-y-1">
-            <label class="text-[10px] font-extrabold uppercase text-[#F7E7CE]">Harga (Rp)*</label>
-            <input type="number" id="pkgPrice" required placeholder="Contoh: 15000000" class="w-full bg-[#120A0C] border border-[#B76E79]/50 rounded-xl px-4 py-2.5 text-xs text-white font-bold focus:outline-none border-rose-pink-glow">
+            <label class="text-[10px] font-extrabold uppercase text-[#F7E7CE]">Total Harga Paket (Rp)*</label>
+            <input type="number" id="pkgPrice" required placeholder="Contoh: 15000000" class="w-full bg-[#120A0C] border border-[#B76E79]/50 rounded-xl px-4 py-2.5 text-xs text-[#FFD700] font-mono font-bold focus:outline-none border-rose-pink-glow">
           </div>
         </div>
 
-        <div class="space-y-1">
-          <label class="text-[10px] font-extrabold uppercase text-[#F7E7CE]">URL Gambar Foto Portofolio*</label>
-          <input type="url" id="pkgImageUrl" required placeholder="https://images.unsplash.com/..." class="w-full bg-[#120A0C] border border-[#B76E79]/50 rounded-xl px-4 py-2.5 text-xs text-white font-bold focus:outline-none border-rose-pink-glow">
+        <!-- MASTER INVENTORY SELECTION CHECKBOXES -->
+        <div class="space-y-2 bg-[#120A0C] p-4 rounded-2xl border border-[#B76E79]/40">
+          <div class="flex items-center justify-between border-b border-[#B76E79]/20 pb-2">
+            <label class="text-[10px] font-extrabold uppercase text-[#F7E7CE] flex items-center gap-1">
+              <i data-lucide="layers" class="w-3.5 h-3.5 text-[#B76E79]"></i>
+              <span>Komposisi Item Dari Master Inventaris</span>
+            </label>
+            <span class="text-[9px] text-[#E8C5C8]">Centang item pembuat paket</span>
+          </div>
+
+          <div id="pkgInventorySelection" class="space-y-1.5 max-h-36 overflow-y-auto pr-1">
+            <!-- Dynamically populated checkboxes from allInventoryData -->
+            <p class="text-[10px] text-[#E8C5C8] italic">Memuat master item...</p>
+          </div>
+        </div>
+
+        <!-- UPLOAD IMAGE TO GOOGLE DRIVE -->
+        <div class="space-y-2 bg-[#120A0C] p-4 rounded-2xl border border-[#B76E79]/40">
+          <label class="text-[10px] font-extrabold uppercase text-[#F7E7CE] block">Upload Foto Portofolio Ke Google Drive</label>
+          <div class="flex items-center gap-2">
+            <input type="file" id="pkgImageFile" accept="image/*" class="w-full bg-[#1A0D11] border border-[#B76E79]/50 rounded-xl px-3 py-1.5 text-xs text-[#E8C5C8] file:mr-3 file:py-1 file:px-3 file:rounded-full file:border-0 file:text-[10px] file:font-extrabold file:bg-[#800020] file:text-[#F7E7CE]">
+            <button type="button" onclick="uploadPackageImageToDrive()" class="px-4 py-2 rounded-xl bg-[#800020] text-[#F7E7CE] hover:bg-[#B76E79] text-xs font-extrabold shrink-0 border border-[#B76E79]/40 cursor-pointer">
+              Upload Drive
+            </button>
+          </div>
+          <span id="uploadPkgStatus" class="text-[10px] font-extrabold text-amber-300 block"></span>
+          <input type="url" id="pkgImageUrl" placeholder="Atau paste URL Direct Gambar https://..." class="w-full bg-[#120A0C] border border-[#B76E79]/50 rounded-xl px-4 py-2 text-[11px] text-white font-mono focus:outline-none border-rose-pink-glow">
         </div>
 
         <div class="space-y-1">
-          <label class="text-[10px] font-extrabold uppercase text-[#F7E7CE]">Deskripsi Paket*</label>
+          <label class="text-[10px] font-extrabold uppercase text-[#F7E7CE]">Deskripsi / Rincian Paket*</label>
           <textarea id="pkgDescription" rows="3" required placeholder="Tuliskan isi paket selengkapnya..." class="w-full bg-[#120A0C] border border-[#B76E79]/50 rounded-xl px-4 py-2.5 text-xs text-white font-bold focus:outline-none border-rose-pink-glow"></textarea>
         </div>
 
@@ -487,8 +511,10 @@
           <span class="text-xs uppercase tracking-wider font-extrabold text-[#E8C5C8]">Estimasi Investasi Paket:</span>
           <span id="detailPkgPrice" class="font-mono text-xl font-extrabold text-[#FFD700]">Rp 0</span>
         </div>
+
         <div class="border-t border-[#B76E79]/20 pt-3">
-          <span class="text-xs uppercase tracking-wider font-extrabold text-[#F7E7CE] block mb-1">Rincian & Cakupan Layanan:</span>
+          <span class="text-xs uppercase tracking-wider font-extrabold text-[#F7E7CE] block mb-1">Rincian & Composition Item:</span>
+          <div id="detailPkgCompositionList" class="mb-3 space-y-1 text-xs text-amber-200"></div>
           <p id="detailPkgDescription" class="text-xs text-[#E8C5C8] leading-relaxed font-medium whitespace-pre-line"></p>
         </div>
       </div>
@@ -501,7 +527,7 @@
 
   <!-- MODAL: ADD / EDIT INVENTORY ITEM -->
   <div id="inventoryModal" class="fixed inset-0 z-50 bg-[#0C0607]/80 backdrop-blur-md hidden flex items-center justify-center p-4">
-    <div class="glass-card-dark border border-[#B76E79] rounded-3xl w-full max-w-lg p-6 sm:p-8 space-y-6 shadow-2xl">
+    <div class="glass-card-dark border border-[#B76E79] rounded-3xl w-full max-w-lg p-6 sm:p-8 space-y-6 shadow-2xl max-h-[90vh] overflow-y-auto">
       <div class="flex items-center justify-between border-b border-[#B76E79]/30 pb-4">
         <h3 id="modalInventoryTitle" class="font-serif-luxury text-2xl font-bold text-gradient-rose">Tambah Item Master Inventaris</h3>
         <button onclick="closeInventoryModal()" class="text-[#B76E79] hover:text-white cursor-pointer">
@@ -535,6 +561,19 @@
         <div class="space-y-1">
           <label class="text-[10px] font-extrabold uppercase text-[#F7E7CE]">Rincian Spesifikasi & Keterangan*</label>
           <textarea id="invSpesifikasi" rows="3" required placeholder="Contoh: Tinggi 50cm, modul karpet merah, include rigging..." class="w-full bg-[#120A0C] border border-[#B76E79]/50 rounded-xl px-4 py-2.5 text-xs text-white font-bold focus:outline-none border-rose-pink-glow"></textarea>
+        </div>
+
+        <!-- UPLOAD INVENTORY IMAGE TO DRIVE -->
+        <div class="space-y-2 bg-[#120A0C] p-4 rounded-2xl border border-[#B76E79]/40">
+          <label class="text-[10px] font-extrabold uppercase text-[#F7E7CE] block">Upload Foto Item Ke Google Drive</label>
+          <div class="flex items-center gap-2">
+            <input type="file" id="invImageFile" accept="image/*" class="w-full bg-[#1A0D11] border border-[#B76E79]/50 rounded-xl px-3 py-1.5 text-xs text-[#E8C5C8] file:mr-3 file:py-1 file:px-3 file:rounded-full file:border-0 file:text-[10px] file:font-extrabold file:bg-[#800020] file:text-[#F7E7CE]">
+            <button type="button" onclick="uploadInventoryImageToDrive()" class="px-4 py-2 rounded-xl bg-[#800020] text-[#F7E7CE] hover:bg-[#B76E79] text-xs font-extrabold shrink-0 border border-[#B76E79]/40 cursor-pointer">
+              Upload Drive
+            </button>
+          </div>
+          <span id="uploadInvStatus" class="text-[10px] font-extrabold text-amber-300 block"></span>
+          <input type="url" id="invImageUrl" placeholder="URL Direct Gambar https://..." class="w-full bg-[#120A0C] border border-[#B76E79]/50 rounded-xl px-4 py-2 text-[11px] text-white font-mono focus:outline-none border-rose-pink-glow">
         </div>
 
         <button type="submit" id="saveInvBtn" class="w-full py-3.5 rounded-xl bg-rose-gold-gradient text-white font-extrabold text-xs uppercase tracking-widest shadow-lg hover:opacity-90 transition-all flex items-center justify-center gap-2 cursor-pointer">
