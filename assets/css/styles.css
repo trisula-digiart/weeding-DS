@@ -1,111 +1,171 @@
 @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;0,700;1,600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
 
-/* HIGH CONTRAST BRIGHT LUXURY PALETTE */
+/* ==========================================================
+AURA ELEGANCE - HIGH CONTRAST DARK VELVET & GOLD PALETTE
+========================================================== */
 :root {
-  --color-rose-main: #C04271;
-  --color-burgundy-deep: #580015;
-  --color-burgundy-primary: #800020;
-  --color-text-main: #1F050A;
-  --color-text-sub: #4A121E;
-  --color-bg-bright: #FFF5F7;
-  --color-card-white: #FFFFFF;
+--color-bg-dark: #120A0C;
+--color-bg-card: #1A0D11;
+--color-rose-gold: #B76E79;
+--color-rose-soft: #FDE8E0;
+--color-champagne: #F7E7CE;
+--color-burgundy: #800020;
+--color-[#580015]: #580015;
+--color-text-white: #FFFFFF;
+--color-text-sub: #E8C5C8;
+--color-gold: #FFD700;
 }
 
 body {
-  font-family: 'Plus Jakarta Sans', sans-serif;
-  background-color: var(--color-bg-bright);
-  color: var(--color-text-main);
-  overflow-x: hidden;
-  -webkit-tap-highlight-color: transparent;
-  background-image: 
-    radial-gradient(circle at 10% 20%, rgba(192, 66, 113, 0.08) 0%, transparent 40%),
-    radial-gradient(circle at 90% 80%, rgba(128, 0, 32, 0.08) 0%, transparent 40%);
+font-family: 'Plus Jakarta Sans', sans-serif;
+background-color: var(--color-bg-dark);
+color: #FFFFFF !important;
+overflow-x: hidden;
+-webkit-tap-highlight-color: transparent;
 }
 
 .font-serif-luxury {
-  font-family: 'Cormorant Garamond', serif;
+font-family: 'Cormorant Garamond', serif;
 }
 
-/* HIGH CONTRAST GRADIENTS & BUTTONS */
+/* ==========================================================
+HIGH CONTRAST GRADIENTS & TYPOGRAPHY
+========================================================== */
 .text-gradient-rose {
-  background: linear-gradient(135deg, #580015 0%, #800020 50%, #B82E5A 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+background: linear-gradient(135deg, #FFF0B3 0%, #F7E7CE 40%, #E8A0BF 100%);
+-webkit-background-clip: text;
+-webkit-text-fill-color: transparent;
 }
 
-/* TOMBOL UTAMA DENGAN WARNA BURGUNDY GELAP BIAR TEKS PUTIH / GOLD POP-UP */
+.text-gradient-gold {
+background: linear-gradient(135deg, #FFD700 0%, #F7E7CE 100%);
+-webkit-background-clip: text;
+-webkit-text-fill-color: transparent;
+}
+
+/* ==========================================================
+BUTTON STYLES WITH GUARANTEED CONTRAST
+========================================================== */
 .btn-primary-burgundy {
-  background: linear-gradient(135deg, #800020 0%, #580015 100%);
-  color: #FFFFFF !important;
-  box-shadow: 0 8px 20px rgba(88, 0, 21, 0.3);
+background: linear-gradient(135deg, #800020 0%, #580015 100%);
+color: #FFFFFF !important;
+border: 1px solid rgba(247, 231, 206, 0.4);
+box-shadow: 0 8px 20px rgba(128, 0, 32, 0.4);
 }
 
 .btn-primary-burgundy:hover {
-  background: linear-gradient(135deg, #A30029 0%, #70001B 100%);
-  box-shadow: 0 12px 25px rgba(88, 0, 21, 0.4);
+background: linear-gradient(135deg, #A30029 0%, #70001B 100%);
+border-color: #F7E7CE;
+box-shadow: 0 12px 25px rgba(128, 0, 32, 0.6);
+}
+
+.bg-rose-gold-gradient {
+background: linear-gradient(135deg, #B76E79 0%, #800020 100%);
+color: #FFFFFF !important;
 }
 
 .bg-rose-soft-gradient {
-  background: linear-gradient(135deg, #FFEBF0 0%, #FDD6E1 100%);
+background: linear-gradient(135deg, #2A0E14 0%, #1A0D11 100%);
 }
 
-.border-rose-pink {
-  border-color: rgba(192, 66, 113, 0.35);
-}
-
-.border-rose-pink-glow:focus {
-  border-color: #800020;
-  box-shadow: 0 0 15px rgba(128, 0, 32, 0.25);
-}
-
-/* GLASS CARD LIGHT MODE */
+/* ==========================================================
+GLASSMOPHISM CARDS & CONTAINERS
+========================================================== */
+.glass-card-dark,
 .glass-card-bright {
-  background: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(192, 66, 113, 0.25);
-  box-shadow: 0 10px 30px rgba(88, 0, 21, 0.06);
+background: rgba(26, 13, 17, 0.9) !important;
+backdrop-filter: blur(16px);
+-webkit-backdrop-filter: blur(16px);
+border: 1px solid rgba(183, 110, 121, 0.4) !important;
+box-shadow: 0 12px 35px rgba(0, 0, 0, 0.6);
+color: #FFFFFF !important;
 }
 
 .glass-card-hover {
-  transition: all 0.3s ease-in-out;
+transition: all 0.3s ease-in-out;
 }
 
 .glass-card-hover:hover {
-  transform: translateY(-5px);
-  border-color: rgba(128, 0, 32, 0.6);
-  box-shadow: 0 15px 35px rgba(88, 0, 21, 0.15);
+transform: translateY(-4px);
+border-color: rgba(247, 231, 206, 0.8) !important;
+box-shadow: 0 15px 40px rgba(128, 0, 32, 0.5);
 }
 
-/* FLORAL WATERMARK ORNAMENT */
-.floral-pattern {
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80' viewBox='0 0 80 80'%3E%3Cpath fill='%23800020' fill-opacity='0.04' d='M40 0 C45 20 60 35 80 40 C60 45 45 60 40 80 C35 60 20 45 0 40 C20 35 35 20 40 0 Z'/%3E%3C/svg%3E");
+/* ==========================================================
+FLORAL WATERMARK MOTIF PATTERN
+========================================================== */
+.floral-pattern,
+.floral-pattern-dark {
+background-color: #120A0C;
+background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Cpath fill='%23B76E79' fill-opacity='0.08' d='M50 0 C55 25 75 45 100 50 C75 55 55 75 50 100 C45 75 25 55 0 50 C25 45 45 25 50 0 Z'/%3E%3C/svg%3E");
 }
 
-/* INPUT FORM CERAH HIGH CONTRAST */
+/* ==========================================================
+TABLE & FORM INPUT HIGH CONTRAST FIXES
+========================================================== */
+table {
+color: #FFFFFF !important;
+}
+
+table th {
+color: #F7E7CE !important;
+background-color: #2A0E14 !important;
+}
+
+table td {
+color: #FFFFFF !important;
+}
+
+input, select, textarea {
+color: #FFFFFF !important;
+background-color: #120A0C !important;
+border-color: rgba(183, 110, 121, 0.5) !important;
+}
+
+input::placeholder,
+textarea::placeholder {
+color: #E8C5C8 !important;
+opacity: 0.7;
+}
+
 input[type="date"]::-webkit-calendar-picker-indicator {
-  filter: invert(0.1) sepia(1) saturate(5) hue-rotate(330deg);
-  cursor: pointer;
+filter: invert(1) sepia(1) saturate(5) hue-rotate(300deg);
+cursor: pointer;
 }
 
 select {
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  appearance: none;
-  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23800020' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'><path d='m6 9 6 6 6-6'/></svg>");
-  background-repeat: no-repeat;
-  background-position: right 1rem center;
-  background-size: 1.2em;
+-webkit-appearance: none;
+-moz-appearance: none;
+appearance: none;
+background-image: url("data:image/svg+xml;utf8,");
+background-repeat: no-repeat;
+background-position: right 1rem center;
+background-size: 1.2em;
 }
 
-/* SCROLLBAR */
+.border-rose-pink {
+border-color: rgba(183, 110, 121, 0.4);
+}
+
+.border-rose-pink-glow:focus {
+border-color: #F7E7CE !important;
+box-shadow: 0 0 15px rgba(247, 231, 206, 0.3);
+}
+
+/* ==========================================================
+CUSTOM SCROLLBAR
+========================================================== */
 ::-webkit-scrollbar {
-  width: 8px;
+width: 8px;
 }
 ::-webkit-scrollbar-track {
-  background: #FFF5F7;
+background: #120A0C;
 }
 ::-webkit-scrollbar-thumb {
-  background: #800020;
-  border-radius: 4px;
+background: #800020;
+border: 1px solid #B76E79;
+border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+background: #B76E79;
 }
